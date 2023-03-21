@@ -8,9 +8,12 @@ import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './controllers/admin/admin.module';
 import { UserModule } from './controllers/user/user.module';
 import { config } from './config';
-
+import { AlbumModule } from './controllers/album/album.module';
+import { RequestModule } from './controllers/request/request.module';
 @Module({
   imports: [
+    RequestModule,
+    AlbumModule,
     UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
