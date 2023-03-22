@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
@@ -43,9 +44,10 @@ export class AlbumController {
     this.albumService.delete(id);
   }
 
-  // @Post('upload')
-  // @UseInterceptors(FileInterceptor('file'))
-  // async upload(@UploadedFile() file) {
-  //   return this.albumService.upload(file);
-  // }
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(@UploadedFile() file){
+    return this.albumService.upload(file);
+  }
+
 }

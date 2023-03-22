@@ -3,13 +3,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { corsConfig } from './cors.config';
+import { initializeFirebaseApp } from 'firebase.config';
+
+initializeFirebaseApp();
 
 async function bootstrap() {
 
   const corsConfig = {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials:true,
+    credentials: true,
     optionsSuccessStatus: 200,
     preflightContinue: false,
   }

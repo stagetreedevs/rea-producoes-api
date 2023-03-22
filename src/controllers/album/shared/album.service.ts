@@ -1,16 +1,15 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Album } from './album';
-import { S3 } from 'aws-sdk';
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 @Injectable()
 export class AlbumService {
 
     constructor(
-        @InjectModel('Album') private readonly albumModel: Model<Album>,
+        @InjectModel('Album') private readonly albumModel: Model<Album>
     ) { }
 
     async list() {
@@ -20,7 +19,6 @@ export class AlbumService {
     async findOne(email: string): Promise<Album | undefined> {
         return this.albumModel.findOne({ email: email })
     }
-
 
     async getById(id: string) {
         return await this.albumModel.findById(id).exec();
@@ -40,34 +38,17 @@ export class AlbumService {
         return await this.albumModel.deleteOne({ _id: id }).exec();
     }
 
-    // async upload(file) {
-    //     const { originalname } = file;
-    //     const bucketS3 = 'imagepainmanagement/users';
-    //     return await this.uploadS3(file.buffer, bucketS3, originalname);
-    // }
+    async upload(file: Express.Multer.File) {
+        const storage = getStorage();
+        const bucket = 'reaproducoes-31713.appspot.com';
+        const { originalname } = file;
 
-    // async uploadS3(file, bucket, name) {
-    //     const s3 = this.getS3();
-    //     const params = {
-    //         Bucket: bucket,
-    //         Key: String(name),
-    //         Body: file,
-    //     };
-    //     return await new Promise((resolve, reject) => {
-    //         s3.upload(params, (err, data) => {
-    //         if (err) {
-    //             Logger.error(err);
-    //             reject(err.message);
-    //         }
-    //             resolve(data);
-    //         });
-    //     });
-    // }
+        // const fileRef = ref(storage, `${path}/${originalname}`);
+        const fileRef = ref(storage, `test/${originalname}`);
 
-    // getS3() {
-    //     return new S3({
-    //         accessKeyId: process.env.ACCESS_KEY_ID,
-    //         secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    //     });
-    // }
+        const uploaded = await uploadBytes(fileRef, file.buffer);
+
+        const link = getDownloadURL(uploaded.ref).then((url) => { return url })
+        return await link;
+    }
 }
