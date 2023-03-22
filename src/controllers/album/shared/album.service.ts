@@ -43,8 +43,10 @@ export class AlbumService {
         const bucket = 'reaproducoes-31713.appspot.com';
         const { originalname } = file;
 
-        // const fileRef = ref(storage, `${path}/${originalname}`);
-        const fileRef = ref(storage, `test/${originalname}`);
+        const date = new Date();
+        const day: string = date.toLocaleDateString();
+        const path = day.split('/').join('-')
+        const fileRef = ref(storage, `${path}/${originalname}`);
 
         const uploaded = await uploadBytes(fileRef, file.buffer);
 
