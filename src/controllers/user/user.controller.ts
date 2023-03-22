@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Body,
   Controller,
@@ -6,16 +7,12 @@ import {
   Param,
   Post,
   Put,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from './shared/user';
 import { UserService } from './shared/user.service';
-
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
   @Get()
   async list(): Promise<User[]> {
@@ -42,9 +39,4 @@ export class UserController {
     this.userService.delete(id);
   }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async upload(@UploadedFile() file) {
-    return this.userService.upload(file);
-  }
 }
