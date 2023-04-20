@@ -25,7 +25,7 @@ export class AlbumService {
     }
 
     async create(album: Album) {
-        const created = new this.albumModel(Album);
+        const created = new this.albumModel(album);
         return await created.save();
     }
 
