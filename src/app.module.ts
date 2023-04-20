@@ -12,8 +12,6 @@ import { AlbumModule } from './controllers/album/album.module';
 import { RequestModule } from './controllers/request/request.module';
 import { FolderModule } from './controllers/folder/folder.module';
 import { KeyModule } from './controllers/key/key.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 @Module({
   imports: [
     KeyModule,
@@ -24,10 +22,6 @@ import { join } from 'path';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config]
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'swagger-static'),
-      serveRoot: '/swagger',
     }),
     MongooseModule.forRoot(process.env.DB_URL),
     AdminModule,
