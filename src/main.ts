@@ -4,7 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { initializeApp } from 'firebase/app';
 
-const serviceAccount = {
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
   apiKey: "AIzaSyBhSgJt8qA5yNNkAvMHXQfgUsPXhB-B4lo",
   authDomain: "reaproducoes-31713.firebaseapp.com",
   projectId: "reaproducoes-31713",
@@ -13,7 +14,7 @@ const serviceAccount = {
   appId: "1:1030329546371:web:835ec1763a2d89e7cb8db6",
   measurementId: "G-FE7WL2BFKL"
 };
-initializeApp(serviceAccount);
+initializeApp(firebaseConfig );
 
 async function bootstrap() {
 

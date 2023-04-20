@@ -1,10 +1,9 @@
 /* eslint-disable prettier/prettier */
 import * as mongoose from 'mongoose';
 
-export const AlbumSchema = new mongoose.Schema({
+export const FolderSchema = new mongoose.Schema({
     name: String,
-    cover: String,
-    galery: [String],
+	images: [String],
     created_at: {
         type: Date,
         default: Date.now,

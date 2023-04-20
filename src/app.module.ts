@@ -10,8 +10,12 @@ import { UserModule } from './controllers/user/user.module';
 import { config } from './config';
 import { AlbumModule } from './controllers/album/album.module';
 import { RequestModule } from './controllers/request/request.module';
+import { FolderModule } from './controllers/folder/folder.module';
+import { KeyModule } from './controllers/key/key.module';
 @Module({
   imports: [
+    KeyModule,
+    FolderModule,
     RequestModule,
     AlbumModule,
     UserModule,

@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -44,10 +45,10 @@ export class AlbumController {
     this.albumService.delete(id);
   }
 
-  @Post('upload')
+  @Post('upload/')
   @UseInterceptors(FileInterceptor('file'))
-  async upload(@UploadedFile() file){
-    return this.albumService.upload(file);
+  async upload(@Query() path: any, @UploadedFile() file){
+    return this.albumService.upload(path, file);
   }
 
 }
