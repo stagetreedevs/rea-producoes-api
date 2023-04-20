@@ -10,6 +10,9 @@ import {
 } from '@nestjs/common';
 import { Key } from './shared/key';
 import { KeyService } from './shared/key.service';
+import { Album } from '../album/shared/album';
+import { KeyDto } from './dto/key.dto';
+import { ApiBody } from '@nestjs/swagger';
 @Controller('key')
 export class KeyController {
   constructor(private keyService: KeyService) { }
@@ -24,7 +27,13 @@ export class KeyController {
     return this.keyService.getById(id);
   }
 
+  @Get('album/:id')
+  async getAlbum(@Param('id') id: string): Promise<Album> {
+    return this.keyService.getAlbum(id);
+  }
+
   @Post()
+  @ApiBody({ type: KeyDto })
   async create(@Body() chave: Key): Promise<Key> {
     return this.keyService.create(chave);
   }

@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common';
 import { Folder } from './shared/folder';
 import { FolderService } from './shared/folder.service';
+import { FolderDto } from './dto/folder.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('folder')
 export class FolderController {
@@ -27,6 +29,7 @@ export class FolderController {
   }
 
   @Post()
+  @ApiBody({ type: FolderDto })
   async create(@Body() folder: Folder): Promise<Folder> {
     return this.folderService.create(folder);
   }

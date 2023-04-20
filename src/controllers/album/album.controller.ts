@@ -15,6 +15,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Album } from './shared/album';
 import { AlbumService } from './shared/album.service';
+import { AlbumDto } from './dto/album.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('album')
 export class AlbumController {
@@ -31,6 +33,7 @@ export class AlbumController {
   }
 
   @Post()
+  @ApiBody({ type: AlbumDto })
   async create(@Body() album: Album): Promise<Album> {
     return this.albumService.create(album);
   }

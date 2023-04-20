@@ -3,6 +3,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { initializeApp } from 'firebase/app';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -14,7 +15,7 @@ const firebaseConfig = {
   appId: "1:1030329546371:web:835ec1763a2d89e7cb8db6",
   measurementId: "G-FE7WL2BFKL"
 };
-initializeApp(firebaseConfig );
+initializeApp(firebaseConfig);
 
 async function bootstrap() {
 
@@ -27,6 +28,16 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule);
+
+  const config = new DocumentBuilder()
+    .setTitle('R&A Producoes')
+    .setDescription('The R&A Producoes API description')
+    .setVersion('1.0')
+    .addTag('app')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   app.enableCors()
   await app.listen(3000);
 }

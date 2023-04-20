@@ -4,11 +4,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Key } from './key';
+import { Album } from 'src/controllers/album/shared/album';
 @Injectable()
 export class KeyService {
 
     constructor(
         @InjectModel('Key') private readonly keyModel: Model<Key>,
+        @InjectModel('Album') private readonly albumModel: Model<Album>
     ) { }
 
     async list() {
@@ -17,6 +19,11 @@ export class KeyService {
 
     async getById(id: string) {
         return await this.keyModel.findById(id).exec();
+    }
+
+    async getAlbum(id: string) {
+        const chave = await this.keyModel.findById(id).exec();
+        return await this.albumModel.findById(chave.album).exec();
     }
 
     async create(key: Key) {

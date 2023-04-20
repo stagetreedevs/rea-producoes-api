@@ -14,6 +14,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from './shared/request';
 import { RequestService } from './shared/request.service';
+import { RequestDto } from './dto/request.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('request')
 export class RequestController {
@@ -30,6 +32,7 @@ export class RequestController {
   }
 
   @Post()
+  @ApiBody({ type: RequestDto })
   async create(@Body() req: Request): Promise<Request> {
     return this.reqService.create(req);
   }

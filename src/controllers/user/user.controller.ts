@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { User } from './shared/user';
 import { UserService } from './shared/user.service';
+import { ApiBody } from '@nestjs/swagger';
+import { UserDto } from './dto/user.dto';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) { }
@@ -25,6 +27,7 @@ export class UserController {
   }
 
   @Post()
+  @ApiBody({ type: UserDto })
   async create(@Body() user: User): Promise<User> {
     return this.userService.create(user);
   }
