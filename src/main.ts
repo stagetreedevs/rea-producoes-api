@@ -39,8 +39,18 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-   // rota para o SwaggerUI
-   app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
+  // rota para o SwaggerUI
+  //  app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(document, {
+    swaggerOptions: {
+      // url da CDN do SwaggerUI
+      urls: [
+        { name: "Swagger UI", url: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/" }
+      ],
+      // caminho para o arquivo CSS da CDN
+      configUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/swagger-ui.css"
+    },
+  }));
 
   app.enableCors()
   await app.listen(3000);
