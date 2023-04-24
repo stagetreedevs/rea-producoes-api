@@ -18,5 +18,11 @@
                 "OPTIONS"
             ]
         }
-    ]
+    ],
+    "rewrites": [
+        {
+          "source": "/swagger-ui/(.*)",
+          "destination": "/swagger-ui/$1"
+        }
+      ]
 }
