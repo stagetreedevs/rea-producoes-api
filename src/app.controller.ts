@@ -11,7 +11,7 @@ import * as swaggerUi from 'swagger-ui-dist';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('api-docs')
+  @Get('api')
   getSwagger(@Res() response: Response) {
     const document = YAML.load('./swagger.yaml');
     const html = swaggerUi.generateHTML(document, {});
