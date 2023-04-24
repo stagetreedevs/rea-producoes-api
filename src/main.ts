@@ -36,7 +36,7 @@ async function bootstrap() {
     .addTag('app')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  // SwaggerModule.setup('api', app, document);
 
   SwaggerModule.setup('api', app, document, {
     // customSiteTitle: 'Backend Generator',
