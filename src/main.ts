@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { initializeApp } from 'firebase/app';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as swaggerUi from 'swagger-ui-express';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -37,6 +38,9 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+   // rota para o SwaggerUI
+   app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
 
   app.enableCors()
   await app.listen(3000);
