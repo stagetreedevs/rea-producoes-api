@@ -5,6 +5,8 @@ import { AppModule } from './app.module';
 import { initializeApp } from 'firebase/app';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as swaggerUi from 'swagger-ui-express';
+import * as serveStatic from 'serve-static';
+import * as path from 'path';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -41,14 +43,24 @@ async function bootstrap() {
 
   // rota para o SwaggerUI
   //  app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(document, {
+  // app.use('/api', swaggerUi.serve, swaggerUi.setup(document, {
+  //   swaggerOptions: {
+  //     urls: [
+  //       { name: "Swagger UI", url: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/" }
+  //     ],
+  //     configUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/swagger-ui.css"
+  //   },
+  // }));
+
+  // configuração do serve-static para servir arquivos estáticos
+  app.use('/swagger-ui', serveStatic(path.join(__dirname, '..', 'node_modules', 'swagger-ui-dist')));
+
+  // rota para o SwaggerUI
+  app.use('/api', swaggerUi.serve, swaggerUi.setup(document, {
     swaggerOptions: {
-      // url da CDN do SwaggerUI
-      urls: [
-        { name: "Swagger UI", url: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/" }
-      ],
-      // caminho para o arquivo CSS da CDN
-      configUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/swagger-ui.css"
+      // caminho para o arquivo CSS
+      css: './swagger-ui.css',
+      // css: '/swagger-ui/swagger-ui.css',
     },
   }));
 
