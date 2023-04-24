@@ -15,7 +15,7 @@ export class AppController {
   getSwagger(@Res() response: Response) {
     const document = YAML.load('./swagger.yaml');
     const html = swaggerUi.generateHTML(document, {
-      css: '/swagger-ui.css'
+      css: '/swagger.css'
     });
     response.setHeader('Content-Type', 'text/html');
     response.send(html);
