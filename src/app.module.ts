@@ -12,6 +12,7 @@ import { AlbumModule } from './controllers/album/album.module';
 import { RequestModule } from './controllers/request/request.module';
 import { FolderModule } from './controllers/folder/folder.module';
 import { KeyModule } from './controllers/key/key.module';
+import { SwaggerModule } from '@nestjs/swagger';
 @Module({
   imports: [
     KeyModule,
@@ -19,6 +20,7 @@ import { KeyModule } from './controllers/key/key.module';
     RequestModule,
     AlbumModule,
     UserModule,
+    SwaggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config]

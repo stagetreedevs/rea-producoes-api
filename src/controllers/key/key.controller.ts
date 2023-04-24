@@ -12,7 +12,9 @@ import { Key } from './shared/key';
 import { KeyService } from './shared/key.service';
 import { Album } from '../album/shared/album';
 import { KeyDto } from './dto/key.dto';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Chave')
 @Controller('key')
 export class KeyController {
   constructor(private keyService: KeyService) { }

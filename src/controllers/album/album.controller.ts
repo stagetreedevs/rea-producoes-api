@@ -16,8 +16,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Album } from './shared/album';
 import { AlbumService } from './shared/album.service';
 import { AlbumDto } from './dto/album.dto';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Album')
 @Controller('album')
 export class AlbumController {
   constructor(private albumService: AlbumService) {}

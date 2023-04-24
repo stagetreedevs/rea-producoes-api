@@ -2,7 +2,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Admin } from './shared/admin';
 import { AdminService } from './shared/admin.service';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Administrador')
 @Controller('admin')
 export class AdminController {
 

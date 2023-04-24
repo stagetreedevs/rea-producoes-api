@@ -12,7 +12,8 @@ import {
 import { Request } from './shared/request';
 import { RequestService } from './shared/request.service';
 import { RequestDto } from './dto/request.dto';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+@ApiTags('Requisições')
 @Controller('request')
 export class RequestController {
   constructor(private reqService: RequestService) { }

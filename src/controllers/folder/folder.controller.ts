@@ -12,7 +12,9 @@ import {
 import { Folder } from './shared/folder';
 import { FolderService } from './shared/folder.service';
 import { FolderDto } from './dto/folder.dto';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Pastas')
 @Controller('folder')
 export class FolderController {
   constructor(private folderService: FolderService) { }
