@@ -40,7 +40,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
    // rota para o SwaggerUI
-   app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
+  //  app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
 
   app.enableCors()
   await app.listen(3000);
