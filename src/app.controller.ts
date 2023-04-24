@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller, Get, UseGuards, Post, Request, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -11,15 +12,15 @@ import * as swaggerUi from 'swagger-ui-dist';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('api')
-  getSwagger(@Res() response: Response) {
-    const document = YAML.load('./swagger.yaml');
-    const html = swaggerUi.generateHTML(document, {
-      css: './swagger-ui.css'
-    });
-    response.setHeader('Content-Type', 'text/html');
-    response.send(html);
-  }
+  // @Get('api')
+  // getSwagger(@Res() response: Response) {
+  //   const document = YAML.load('./swagger.yaml');
+  //   const html = swaggerUi.generateHTML(document, {
+  //     css: './swagger-ui.css'
+  //   });
+  //   response.setHeader('Content-Type', 'text/html');
+  //   response.send(html);
+  // }
 
   @UseGuards(AuthGuard('local'))
   @ApiOperation({ summary: 'Login', description: 'Passe um email e uma senha válida para entrar no sistema.' })
