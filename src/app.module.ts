@@ -20,7 +20,7 @@ import { SwaggerModule } from '@nestjs/swagger';
     RequestModule,
     AlbumModule,
     UserModule,
-    SwaggerModule,
+    SwaggerModule, 
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config]
