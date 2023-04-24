@@ -45,10 +45,11 @@ async function bootstrap() {
   //  app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
   app.use('/api', swaggerUi.serve, swaggerUi.setup(document, {
     swaggerOptions: {
-      urls: [
-        { name: "Swagger UI", url: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/" }
-      ],
-      configUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/swagger-ui.css"
+      css: './swagger-ui.css',
+      // urls: [
+      //   { name: "Swagger UI", url: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/" }
+      // ],
+      // configUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/swagger-ui.css"
     },
   }));
 
