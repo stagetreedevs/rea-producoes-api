@@ -4,9 +4,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { initializeApp } from 'firebase/app';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as swaggerUi from 'swagger-ui-express';
-import * as serveStatic from 'serve-static';
-import * as path from 'path';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -41,17 +38,19 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // rota para o SwaggerUI
-  //  app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
-  app.use('/api', swaggerUi.serve, swaggerUi.setup(document, {
-    swaggerOptions: {
-      css: './swagger-ui.css',
-      // urls: [
-      //   { name: "Swagger UI", url: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/" }
-      // ],
-      // configUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.18.2/swagger-ui.css"
-    },
-  }));
+  SwaggerModule.setup('api', app, document, {
+    // customSiteTitle: 'Backend Generator',
+    // customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
+    customJs: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.2/swagger-ui-bundle.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.2/swagger-ui-standalone-preset.min.js',
+    ],
+    customCssUrl: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.2/swagger-ui.min.css',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.2/swagger-ui-standalone-preset.min.css',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.2/swagger-ui.css',
+    ],
+  });
 
   app.enableCors()
   await app.listen(3000);
