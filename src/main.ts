@@ -31,7 +31,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('R&A Producoes')
-    .setDescription('The R&A Producoes API description')
+    .setDescription('R&A Producoes API - Todos os endpoints da aplicação')
     .setVersion('1.0')
     .addTag('app')
     .build();
