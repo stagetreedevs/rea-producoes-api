@@ -33,8 +33,8 @@ export class KeyController {
 
   @Get('album/:id')
   @ApiOperation({ summary: 'Listar album por chave', description: 'Passando o id como parametro, retornar o album que contem na chave.' })
-  async getAlbum(@Param('id') id: string): Promise<Album> {
-    return this.keyService.getAlbum(id);
+  async getKeyValue(@Param('id') id: string): Promise<Album> {
+    return this.keyService.getKeyValue(id);
   }
 
   @Post()
