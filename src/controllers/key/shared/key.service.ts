@@ -21,6 +21,10 @@ export class KeyService {
         return await this.keyModel.findById(id).exec();
     }
 
+    async getByAlbum(album: string) {
+        return await this.keyModel.findOne({album: album}).exec();
+    }
+
     async getKeyValue(value: string) {
         const chave = await this.keyModel.findOne({value: value}).exec();
         return await this.albumModel.findById(chave.album).exec();
