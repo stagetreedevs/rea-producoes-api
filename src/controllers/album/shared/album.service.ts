@@ -48,7 +48,11 @@ export class AlbumService {
         };
         const fileRef = ref(storage, `${path.path}/${originalname}`);
         const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
-        const link = getDownloadURL(uploaded.ref).then((url) => { return url })
-        return await link;
+
+        const link = {
+            url: ""
+        }
+        link.url = await getDownloadURL(uploaded.ref).then((url) => { return url });
+        return link;
     }
 }
