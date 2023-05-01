@@ -13,8 +13,10 @@ import { RequestModule } from './controllers/request/request.module';
 import { FolderModule } from './controllers/folder/folder.module';
 import { KeyModule } from './controllers/key/key.module';
 import { SwaggerModule } from '@nestjs/swagger';
+import { ImageModule } from './controllers/image/image.module';
 @Module({
   imports: [
+    ImageModule,
     KeyModule,
     FolderModule,
     RequestModule,
