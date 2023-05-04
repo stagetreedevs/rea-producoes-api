@@ -5,12 +5,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Key } from './key';
 import { Album } from 'src/controllers/album/shared/album';
+import { FolderService } from 'src/controllers/folder/shared/folder.service';
+import { forkJoin } from 'rxjs';
 @Injectable()
 export class KeyService {
 
     constructor(
         @InjectModel('Key') private readonly keyModel: Model<Key>,
-        @InjectModel('Album') private readonly albumModel: Model<Album>
+        @InjectModel('Album') private readonly albumModel: Model<Album>,
+        private folderService: FolderService
     ) { }
 
     async list() {
@@ -28,6 +31,18 @@ export class KeyService {
     async getKeyValue(value: string) {
         const chave = await this.keyModel.findOne({value: value}).exec();
         return await this.albumModel.findById(chave.album).exec();
+    }
+
+    async getFolders(value: string) {
+        const chave = await this.keyModel.findOne({value: value}).exec();
+        const album = await this.albumModel.findById(chave.album).exec();
+        const observables = album.galery.map(id => this.folderService.getById(id));
+        const galery = await forkJoin(observables).toPromise();
+        const result = {
+            album_name: album.name,
+            folders: galery
+        }
+        return result;
     }
 
     async create(key: Key) {
