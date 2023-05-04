@@ -39,6 +39,7 @@ export class KeyService {
         const observables = album.galery.map(id => this.folderService.getById(id));
         const galery = await forkJoin(observables).toPromise();
         const result = {
+            album_id: album._id,
             album_name: album.name,
             folders: galery
         }
