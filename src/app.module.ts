@@ -14,8 +14,19 @@ import { FolderModule } from './controllers/folder/folder.module';
 import { KeyModule } from './controllers/key/key.module';
 import { SwaggerModule } from '@nestjs/swagger';
 import { ImageModule } from './controllers/image/image.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailController } from './controllers/email/email.controller';
 @Module({
   imports: [
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.sendgrid.net',
+        auth: {
+          user: 'apikey',
+          pass: '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'
+        }
+      }
+    }),
     ImageModule,
     KeyModule,
     FolderModule,
@@ -31,7 +42,7 @@ import { ImageModule } from './controllers/image/image.module';
     AdminModule,
     AuthModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, EmailController],
   providers: [AppService],
 })
 export class AppModule { }

@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 
 export class Image extends Document {
     name: string;
+    email: string;
 	course: string;
 	class: string;
 	image: string;

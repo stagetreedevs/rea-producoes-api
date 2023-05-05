@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 
 export const ImageSchema = new mongoose.Schema({
     name: String,
+    email: String,
 	course: String,
 	class: String,
 	image: String,

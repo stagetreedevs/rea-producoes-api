@@ -6,6 +6,9 @@ export class ImageDto {
     name: string;
 
     @ApiProperty()
+    email: string;
+
+    @ApiProperty()
     course: string;
 
     @ApiProperty()
