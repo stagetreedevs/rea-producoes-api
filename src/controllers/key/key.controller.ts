@@ -37,6 +37,12 @@ export class KeyController {
     return this.keyService.getByAlbum(id);
   }
 
+  @Get('keyvalue/:id')
+  @ApiOperation({ summary: 'Buscar chave por seu value', description: 'Passando o value como parametro, retornar a chave desejado.' })
+  async getByValue(@Param('id') id: string): Promise<Key> {
+    return this.keyService.getByValue(id);
+  }
+
   @Get('folder/:id')
   @ApiOperation({ summary: 'Lista pastas do album através da chave', description: 'Passando o valor da chave como parametro, retorna um array contendo as pastas presentes naquele album.' })
   async getFolders(@Param('id') id: string): Promise<any> {
@@ -45,8 +51,8 @@ export class KeyController {
 
   @Get('album/:id')
   @ApiOperation({ summary: 'Listar album por chave', description: 'Passando o id como parametro, retornar o album que contem na chave.' })
-  async getKeyValue(@Param('id') id: string): Promise<Album> {
-    return this.keyService.getKeyValue(id);
+  async getAlbumValue(@Param('id') id: string): Promise<Album> {
+    return this.keyService.getAlbumValue(id);
   }
 
   @Post()
