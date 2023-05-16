@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Folder } from './folder';
+import { forkJoin } from 'rxjs';
 @Injectable()
 export class FolderService {
 
@@ -17,6 +18,13 @@ export class FolderService {
 
     async getById(id: string) {
         return await this.folderModel.findById(id).exec();
+    }
+
+    async getFolders(id: string) {
+        const pasta = await this.folderModel.findById(id);
+        const observables = pasta.folder.map(id => this.getById(id));
+        const result = await forkJoin(observables).toPromise();
+        return result;
     }
 
     async create(folder: Folder) {

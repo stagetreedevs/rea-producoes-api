@@ -14,5 +14,8 @@ export class FolderDto {
     sharing: [boolean];
 
     @ApiProperty()
+    child: [boolean];
+
+    @ApiProperty()
     created_at: Date;
 }

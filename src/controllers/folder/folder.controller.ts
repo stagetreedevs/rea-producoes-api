@@ -20,6 +20,14 @@ export class FolderController {
   constructor(private folderService: FolderService) { }
 
   @Get()
+  @ApiOperation({ summary: 'Listar pastas', description: 'Lista todas as pastas na raiz do firebase.' })
+  async getRoot(): Promise<Folder[]> {
+    const folders = this.folderService.list();
+    const filteredFolders = (await folders).filter(folder => folder.child === false);
+    return filteredFolders;
+  }
+
+  @Get('all')
   @ApiOperation({ summary: 'Listar pastas', description: 'Lista todas as pastas do banco de dados.' })
   async list(): Promise<Folder[]> {
     return this.folderService.list();
@@ -29,6 +37,12 @@ export class FolderController {
   @ApiOperation({ summary: 'Listar pasta por ID', description: 'Passando o id como parametro, retornar a pasta desejado.' })
   async getById(@Param('id') id: string): Promise<Folder> {
     return this.folderService.getById(id);
+  }
+
+  @Get('folders/:id')
+  @ApiOperation({ summary: 'Listar pastas dentro de outra pasta por ID', description: 'Passando o id como parametro, retornar as pastas que estão contidas na pasta passada.' })
+  async getFolders(@Param('id') id: string): Promise<any> {
+    return this.folderService.getFolders(id);
   }
 
   @Post()

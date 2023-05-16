@@ -5,5 +5,6 @@ export class Folder extends Document {
 	images: [string];
     folder: [string];
     sharing: boolean;
+    child: boolean;
     created_at: Date;
 }
