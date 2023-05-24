@@ -6,5 +6,6 @@ export class Folder extends Document {
     folder: [string];
     sharing: boolean;
     child: boolean;
+    father: string;
     created_at: Date;
 }

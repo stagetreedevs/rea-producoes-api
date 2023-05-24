@@ -39,6 +39,12 @@ export class FolderController {
     return this.folderService.getById(id);
   }
 
+  @Get('name/:name')
+  @ApiOperation({ summary: 'Listar pasta por nome', description: 'Passando o nome como parametro, retornar a pasta desejado.' })
+  async getFolderByName(@Param('name') name: string) {
+    return this.folderService.getByName(name);
+  }
+
   @Get('folders/:id')
   @ApiOperation({ summary: 'Listar pastas dentro de outra pasta por ID', description: 'Passando o id como parametro, retornar as pastas que estão contidas na pasta passada.' })
   async getFolders(@Param('id') id: string): Promise<any> {

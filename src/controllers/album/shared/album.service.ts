@@ -5,11 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Album } from './album';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { FolderService } from 'src/controllers/folder/shared/folder.service';
+import { forkJoin } from 'rxjs';
 @Injectable()
 export class AlbumService {
 
     constructor(
-        @InjectModel('Album') private readonly albumModel: Model<Album>
+        @InjectModel('Album') private readonly albumModel: Model<Album>,
+        private folderService: FolderService
     ) { }
 
     async list() {
@@ -20,8 +23,30 @@ export class AlbumService {
         return this.albumModel.findOne({ email: email })
     }
 
-    async getById(id: string) {
+    async getId(id: string) {
         return await this.albumModel.findById(id).exec();
+    }
+
+    async getById(id: string) {
+        const album = await this.albumModel.findById(id).exec();
+        const len:number = album.galery.length;
+
+        if(len === 0){
+            return await this.albumModel.findById(id).exec();
+        }
+        else{
+            const observables = album.galery.map(id => this.folderService.getById(id));
+            const galery = await forkJoin(observables).toPromise();
+            const filteredFolders = (await galery).filter(folder => folder.child === false);
+            const result = {
+                album_id: album._id,
+                album_name: album.name,
+                galery: album.galery,
+                created_at: album.created_at,
+                folders: filteredFolders
+            }
+            return result;
+        }
     }
 
     async create(album: Album) {
@@ -31,7 +56,7 @@ export class AlbumService {
 
     async update(id: string, album: Album) {
         await this.albumModel.updateOne({ _id: id }, album).exec()
-        return this.getById(id);
+        return this.getId(id);
     }
 
     async delete(id: string) {

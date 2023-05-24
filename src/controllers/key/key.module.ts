@@ -6,8 +6,6 @@ import { KeySchema } from './schema/key.schema';
 import { KeyService } from './shared/key.service';
 import { KeyController } from './key.controller';
 import { FolderModule } from '../folder/folder.module';
-// import { AlbumService } from '../album/shared/album.service';
-// import { FolderService } from '../folder/shared/folder.service';
 @Module({
   imports: [MongooseModule.forFeature(
     [

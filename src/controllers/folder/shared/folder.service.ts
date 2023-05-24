@@ -22,10 +22,53 @@ export class FolderService {
 
     async getFolders(id: string) {
         const pasta = await this.folderModel.findById(id);
-        const observables = pasta.folder.map(id => this.getById(id));
-        const result = await forkJoin(observables).toPromise();
-        return result;
+        const len:number = pasta.folder.length;
+
+        if(len === 0){
+            return await this.folderModel.findById(id);
+        }
+        else{
+            const observables = pasta.folder.map(id => this.getById(id));
+            const folders = await forkJoin(observables).toPromise();
+            const result = {
+                _id: pasta._id,
+                name: pasta.name,
+                images: pasta.images,
+                folder: pasta.folder,
+                folders: folders,
+                sharing: pasta.sharing,
+                child: pasta.child,
+                created_at: pasta.created_at
+            }
+            return result;
+        }
+
     }
+
+    async getByName(name: string) {
+        const pasta = await this.folderModel.findOne({ name }).exec();
+        const len:number = pasta.folder.length;
+
+        if(len === 0){
+            return await this.folderModel.findOne({ name }).exec();
+        }
+        else {
+            const observables = pasta.folder.map(id => this.getById(id));
+            const folders = await forkJoin(observables).toPromise();
+            const result = {
+                _id: pasta._id,
+                name: pasta.name,
+                images: pasta.images,
+                folder: pasta.folder,
+                folders: folders,
+                sharing: pasta.sharing,
+                child: pasta.child,
+                created_at: pasta.created_at
+            }
+            return result;
+        }
+    }
+
 
     async create(folder: Folder) {
         const created = new this.folderModel(folder);

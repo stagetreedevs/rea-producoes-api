@@ -12,6 +12,7 @@ export const FolderSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    father: String,
     created_at: {
         type: Date,
         default: Date.now,
