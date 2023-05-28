@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 
-export class RequestDto {
+export class ImagesUserDto {
     @ApiProperty()
     name: string;
 
@@ -15,7 +15,13 @@ export class RequestDto {
     class: string;
 
     @ApiProperty()
-    linkMusic: string;
+    album: string;
+
+    @ApiProperty()
+    ledPanel: [string];
+
+    @ApiProperty()
+    picture: [string];
     
     @ApiProperty()
     created_at: Date;

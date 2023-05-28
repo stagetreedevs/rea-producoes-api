@@ -16,6 +16,8 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { ImageModule } from './controllers/image/image.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailController } from './controllers/email/email.controller';
+import { InvitationModule } from './controllers/invitation/invitation.module';
+import { ImagesUserModule } from './controllers/imagesUser/imagesUser.module';
 @Module({
   imports: [
     MailerModule.forRoot({
@@ -27,7 +29,9 @@ import { EmailController } from './controllers/email/email.controller';
         }
       }
     }),
+    ImagesUserModule,
     ImageModule,
+    InvitationModule,
     KeyModule,
     FolderModule,
     RequestModule,

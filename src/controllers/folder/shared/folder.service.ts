@@ -69,7 +69,6 @@ export class FolderService {
         }
     }
 
-
     async create(folder: Folder) {
         const created = new this.folderModel(folder);
         return await created.save();

@@ -25,27 +25,45 @@ export class KeyService {
     }
 
     async getByAlbum(album: string) {
-        return await this.keyModel.findOne({album: album}).exec();
+        return await this.keyModel.findOne({ album: album }).exec();
     }
 
     async getByValue(value: string) {
-        return await this.keyModel.findOne({value: value}).exec();
+        return await this.keyModel.findOne({ value: value }).exec();
     }
 
     async getAlbumValue(value: string) {
-        const chave = await this.keyModel.findOne({value: value}).exec();
-        return await this.albumModel.findById(chave.album).exec();
+        const chave = await this.keyModel.findOne({ value }).exec();
+        const album = await this.albumModel.findById(chave.album).exec();
+
+        const len: number = album.galery.length;
+
+        if (len === 0) {
+            return await this.albumModel.findById(album?._id).exec();
+        } else {
+            const observables = album.galery.map((id) => this.folderService.getById(id));
+            const galery = await forkJoin(observables).toPromise();
+            const filteredFolders = (await galery).filter((folder) => folder.child === false);
+            const result = {
+                _id: album._id,
+                name: album.name,
+                galery: album.galery,
+                created_at: album.created_at,
+                folders: filteredFolders,
+            };
+            return result;
+        }
     }
 
     async getFolders(value: string) {
-        const chave = await this.keyModel.findOne({value: value}).exec();
+        const chave = await this.keyModel.findOne({ value: value }).exec();
         const album = await this.albumModel.findById(chave.album).exec();
-        const len:number = album.galery.length;
-        
-        if(len === 0){
+        const len: number = album.galery.length;
+
+        if (len === 0) {
             return await this.albumModel.findById(chave.album).exec();
         }
-        else{
+        else {
             const observables = album.galery.map(id => this.folderService.getById(id));
             const galery = await forkJoin(observables).toPromise();
             const result = {

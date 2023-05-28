@@ -10,10 +10,8 @@ import {
 } from '@nestjs/common';
 import { Key } from './shared/key';
 import { KeyService } from './shared/key.service';
-import { Album } from '../album/shared/album';
 import { KeyDto } from './dto/key.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-
 @ApiTags('Chave')
 @Controller('key')
 export class KeyController {
@@ -51,7 +49,7 @@ export class KeyController {
 
   @Get('album/:id')
   @ApiOperation({ summary: 'Listar album por chave', description: 'Passando o id como parametro, retornar o album que contem na chave.' })
-  async getAlbumValue(@Param('id') id: string): Promise<Album> {
+  async getAlbumValue(@Param('id') id: string): Promise<any> {
     return this.keyService.getAlbumValue(id);
   }
 
