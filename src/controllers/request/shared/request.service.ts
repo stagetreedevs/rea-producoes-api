@@ -38,7 +38,7 @@ export class RequestService {
         return await this.reqModel.deleteOne({ _id: id }).exec();
     }
 
-    async upload(path: any, file: Express.Multer.File) {
+    async upload(email: any, file: Express.Multer.File) {
         const storage = getStorage();
         const { originalname } = file;
         const { mimetype } = file;
@@ -46,7 +46,7 @@ export class RequestService {
         const metadata = {
             contentType: `${type}`,
         };
-        const fileRef = ref(storage, `músicas/${path.path}/${originalname}`);
+        const fileRef = ref(storage, `músicas/${email.email}/${originalname}`);
         const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
 
         const link = {
