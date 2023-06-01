@@ -9,5 +9,6 @@ export class ImagesUser extends Document {
 	album: string;
 	ledPanel: [string];
     picture: [string];
+    albuns: [string];
     created_at: Date;
 }

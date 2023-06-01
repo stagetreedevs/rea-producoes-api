@@ -10,6 +10,7 @@ export const ImageUserSchema = new mongoose.Schema({
 	album: String,
 	ledPanel: [String],
 	picture: [String],
+	albuns: [String],
     created_at: {
         type: Date,
         default: Date.now,

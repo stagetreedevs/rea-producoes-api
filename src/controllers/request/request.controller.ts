@@ -56,7 +56,7 @@ export class RequestController {
   @Post('upload')
   @ApiOperation({ summary: 'Upload firebase', description: 'Passando email e arquivo .mp3 ele irá gerar um link firebase referente ao arquivo.' })
   @UseInterceptors(FileInterceptor('file'))
-  async upload(@Query() email: any, @UploadedFile() file){
+  async upload(@Query() email: any, @UploadedFile() file) {
     return this.reqService.upload(email, file);
   }
 
