@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Controller, Get, UseGuards, Post, Request, Res } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Request, Body } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -18,5 +18,11 @@ export class AppController {
   @ApiOperation({ summary: 'Mensagem inicial do sistema' })
   getHello(): string {
     return this.appService.getHello();
+  }
+  @ApiOperation({ summary: 'Encoded', description: 'Retorna uma url codificada.' })
+  @Post('url')
+  async convert(@Body('url') url: string): Promise<string> {
+    const encodedUrl = await this.appService.convert(url);
+    return encodedUrl;
   }
 }
