@@ -11,9 +11,6 @@ export class FolderDto {
     folder: [string];
 
     @ApiProperty()
-    options: [string];
-
-    @ApiProperty()
     sharing: boolean;
 
     @ApiProperty()
@@ -24,4 +21,16 @@ export class FolderDto {
 
     @ApiProperty()
     created_at: Date;
+
+    @ApiProperty()
+    invitation: boolean;
+
+    @ApiProperty()
+    picture: boolean;
+
+    @ApiProperty()
+    photobook: boolean;
+
+    @ApiProperty()
+    LEDpanel: boolean;
 }

@@ -4,9 +4,13 @@ export class Folder extends Document {
     name: string;
 	images: [string];
     folder: [string];
-    options: [string];
     sharing: boolean;
     child: boolean;
     father: string;
     created_at: Date;
+    //propriedades
+    invitation: boolean;
+    picture: boolean;
+    photobook: boolean;
+    LEDpanel: boolean;
 }

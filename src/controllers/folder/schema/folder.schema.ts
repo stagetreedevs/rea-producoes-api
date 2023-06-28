@@ -4,7 +4,6 @@ export const FolderSchema = new mongoose.Schema({
     name: String,
 	images: [String],
 	folder: [String],
-	options: [String],
     sharing: {
         type: Boolean,
         default: false
@@ -18,4 +17,9 @@ export const FolderSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    //propriedades
+    invitation: Boolean,
+    picture: Boolean,
+    photobook: Boolean,
+    LEDpanel: Boolean,
 })
