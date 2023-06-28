@@ -4,6 +4,7 @@ export const FolderSchema = new mongoose.Schema({
     name: String,
 	images: [String],
 	folder: [String],
+	options: [String],
     sharing: {
         type: Boolean,
         default: false

@@ -4,6 +4,7 @@ export class Folder extends Document {
     name: string;
 	images: [string];
     folder: [string];
+    options: [string];
     sharing: boolean;
     child: boolean;
     father: string;

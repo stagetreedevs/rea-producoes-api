@@ -11,7 +11,10 @@ export class FolderDto {
     folder: [string];
 
     @ApiProperty()
-    sharing: [boolean];
+    options: [string];
+
+    @ApiProperty()
+    sharing: boolean;
 
     @ApiProperty()
     child: boolean;
