@@ -55,7 +55,6 @@ export class RequestService {
         link.url = await getDownloadURL(uploaded.ref).then((url) => { return url });
         return link;
     }
-
     async uploadAll(email: any, files: Express.Multer.File[]) {
         const storage = getStorage();
         const links = [];
@@ -71,9 +70,10 @@ export class RequestService {
             const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
             const url = await getDownloadURL(uploaded.ref);
     
-            links.push({ url });
+            links.push(url);
         }
     
         return links;
     }
+    
 }
