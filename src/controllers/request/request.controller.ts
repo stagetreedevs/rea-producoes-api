@@ -10,13 +10,14 @@ import {
   Put,
   Query,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { Request } from './shared/request';
 import { RequestService } from './shared/request.service';
 import { RequestDto } from './dto/request.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 @ApiTags('Requisições')
 @Controller('request')
 export class RequestController {
@@ -58,6 +59,15 @@ export class RequestController {
   @UseInterceptors(FileInterceptor('file'))
   async upload(@Query() email: any, @UploadedFile() file) {
     return this.reqService.upload(email, file);
+  }
+
+  @Post('uploadAll')
+  @ApiOperation({ summary: 'Upload firebase', description: 'Passe o email e um array de arquivos. Ele irá retorna um array com todas as urls geradas pelo firebase.' })
+  @UseInterceptors(FilesInterceptor('files'))
+  async uploadAll(@UploadedFiles() files: Express.Multer.File[]) {
+    const email = {};
+    const links = await this.reqService.uploadAll(email, files);
+    return { links };
   }
 
 }

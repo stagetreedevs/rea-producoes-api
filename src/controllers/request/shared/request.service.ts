@@ -55,4 +55,25 @@ export class RequestService {
         link.url = await getDownloadURL(uploaded.ref).then((url) => { return url });
         return link;
     }
+
+    async uploadAll(email: any, files: Express.Multer.File[]) {
+        const storage = getStorage();
+        const links = [];
+    
+        for (const file of files) {
+            const { originalname } = file;
+            const { mimetype } = file;
+            const type = mimetype.split('/').join('.');
+            const metadata = {
+                contentType: `${type}`,
+            };
+            const fileRef = ref(storage, `requests/${email.email}/${originalname}`);
+            const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
+            const url = await getDownloadURL(uploaded.ref);
+    
+            links.push({ url });
+        }
+    
+        return links;
+    }
 }

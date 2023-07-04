@@ -16,6 +16,9 @@ export class RequestDto {
 
     @ApiProperty()
     linkMusic: string;
+
+    @ApiProperty()
+    images: [string];
     
     @ApiProperty()
     created_at: Date;

@@ -7,6 +7,6 @@ export class Request extends Document {
 	course: string;
 	class: string;
 	linkMusic: string;
-	fileMusic: string;
+	images: [string];
     created_at: Date;
 }
