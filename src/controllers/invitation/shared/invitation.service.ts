@@ -20,9 +20,16 @@ export class InvitationService {
     }
 
     async create(convite: Invitation) {
+        const existingInvitation = await this.invitationModel.findOne({ email: convite.email }).exec();
+
+        if (existingInvitation) {
+            throw new Error('Já existe um convite com esse email.');
+        }
+        
         const created = new this.invitationModel(convite);
         return await created.save();
     }
+
 
     async update(id: string, convite: Invitation) {
         await this.invitationModel.updateOne({ _id: id }, convite).exec()
@@ -36,7 +43,7 @@ export class InvitationService {
     async findByAlbumId(albumId: string): Promise<boolean> {
         const result = await this.invitationModel.exists({ album: albumId });
         return result ? true : false;
-      }
-      
+    }
+
 
 }
