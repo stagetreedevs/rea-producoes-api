@@ -38,6 +38,11 @@ export class FolderService {
                 folders: folders,
                 sharing: pasta.sharing,
                 child: pasta.child,
+                father: pasta.father,
+                invitation: pasta.invitation,
+                picture: pasta.picture,
+                photobook: pasta.photobook,
+                LEDpanel: pasta.LEDpanel,
                 created_at: pasta.created_at
             }
             return result;
