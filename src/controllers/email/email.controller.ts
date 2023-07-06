@@ -54,4 +54,41 @@ export class EmailController {
             html: htmlContent
         });
     }
+
+    @Post('request/admin')
+    async reqToAdmin(@Body() body: any) {
+        const {
+            toEmail,
+            course,
+            classe,
+            nome,
+        } = body;
+
+        const titleContent = `Requisição solicitada por ${nome}`;
+        const htmlContent = `<h2>Aluno ${nome}</h2>.<br> <h3>Curso:${course}</h3><br> <h3>Turma:${classe}</h3><br>`;
+
+        return await this.mailService.sendMail({
+            to: toEmail,
+            from: 'apistagetree@gmail.com',
+            subject: titleContent,
+            html: htmlContent
+        });
+    }
+
+    @Post('request/user')
+    async reqToUser(@Body() body: any) {
+        const {
+            toEmail,
+        } = body;
+
+        const titleContent = `Requisição enviada!`;
+        const htmlContent = `<p>Sua Requisição foi enviada com sucesso! Aguarde que entraremos em contato.</p>.`;
+
+        return await this.mailService.sendMail({
+            to: toEmail,
+            from: 'apistagetree@gmail.com',
+            subject: titleContent,
+            html: htmlContent
+        });
+    }
 }
