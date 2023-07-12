@@ -8,7 +8,7 @@ export class EmailController {
     async textEmail(@Query('toEmail') toEmail, @Query('title') title, @Query('message') message) {
         return await this.mailService.sendMail({
             to: toEmail,
-            from: 'apistagetree@gmail.com',
+            from: 'noreply@reaproducoes.com',
             subject: title,
             html: message
         });
@@ -30,7 +30,7 @@ export class EmailController {
 
         return await this.mailService.sendMail({
             to: toEmail,
-            from: 'apistagetree@gmail.com',
+            from: 'noreply@reaproducoes.com',
             subject: titleContent,
             html: htmlContent
         });
@@ -49,7 +49,7 @@ export class EmailController {
 
         return await this.mailService.sendMail({
             to: toEmail,
-            from: 'apistagetree@gmail.com',
+            from: 'noreply@reaproducoes.com',
             subject: titleContent,
             html: htmlContent
         });
@@ -69,7 +69,7 @@ export class EmailController {
 
         return await this.mailService.sendMail({
             to: toEmail,
-            from: 'apistagetree@gmail.com',
+            from: 'noreply@reaproducoes.com',
             subject: titleContent,
             html: htmlContent
         });
@@ -86,7 +86,7 @@ export class EmailController {
 
         return await this.mailService.sendMail({
             to: toEmail,
-            from: 'apistagetree@gmail.com',
+            from: 'noreply@reaproducoes.com',
             subject: titleContent,
             html: htmlContent
         });

@@ -25,7 +25,7 @@ import { ImagesUserModule } from './controllers/imagesUser/imagesUser.module';
         host: 'smtp.sendgrid.net',
         auth: {
           user: 'apikey',
-          pass: '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'
+          pass: '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'
         }
       }
     }),
