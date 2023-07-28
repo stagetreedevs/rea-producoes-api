@@ -51,6 +51,12 @@ export class FolderController {
     return this.folderService.getFolders(id);
   }
 
+  @Get('files/:id')
+  @ApiOperation({ summary: 'Videos e Imagens', description: 'Passando o id como parametro, retornar as pastas que estão contidas na pasta passada.' })
+  async getVideos(@Param('id') id: string): Promise<any> {
+    return this.folderService.getVideos(id);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Criar pasta', description: 'Cria um pasta.' })
   @ApiBody({ type: FolderDto })
