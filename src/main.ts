@@ -7,13 +7,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBhSgJt8qA5yNNkAvMHXQfgUsPXhB-B4lo",
-  authDomain: "reaproducoes-31713.firebaseapp.com",
-  projectId: "reaproducoes-31713",
-  storageBucket: "reaproducoes-31713.appspot.com",
-  messagingSenderId: "1030329546371",
-  appId: "1:1030329546371:web:835ec1763a2d89e7cb8db6",
-  measurementId: "G-FE7WL2BFKL"
+  apiKey: "AIzaSyCGtwXzq4nEaZaYfffK1L5y7TsNLjK73R4",
+  authDomain: "app-reaproducao.firebaseapp.com",
+  projectId: "app-reaproducao",
+  storageBucket: "app-reaproducao.appspot.com",
+  messagingSenderId: "914281776157",
+  appId: "1:914281776157:web:0d964a7adf2b6b0be2f2f4",
+  measurementId: "G-2M3Q76QNB9"
 };
 initializeApp(firebaseConfig);
 
