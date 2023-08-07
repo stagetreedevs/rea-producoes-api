@@ -61,4 +61,11 @@ export class AlbumController {
     return this.albumService.upload(path, file);
   }
 
+  @Put('upload/music')
+  @ApiOperation({ summary: 'Upload mp3 firebase', description: 'Adicionará um arquivo de música no banco de dados, passando o file e seu caminho.' })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadMp3(@Query() path: any, @UploadedFile() file){
+    return this.albumService.uploadMp3(path, file);
+  }
+
 }

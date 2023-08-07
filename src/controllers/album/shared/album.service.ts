@@ -29,12 +29,12 @@ export class AlbumService {
 
     async getById(id: string) {
         const album = await this.albumModel.findById(id).exec();
-        const len:number = album.galery.length;
+        const len: number = album.galery.length;
 
-        if(len === 0){
+        if (len === 0) {
             return await this.albumModel.findById(id).exec();
         }
-        else{
+        else {
             const observables = album.galery.map(id => this.folderService.getById(id));
             const galery = await forkJoin(observables).toPromise();
             const filteredFolders = (await galery).filter(folder => folder.child === false);
@@ -64,6 +64,24 @@ export class AlbumService {
     }
 
     async upload(path: any, file: Express.Multer.File) {
+        const storage = getStorage();
+        const { originalname } = file;
+        const { mimetype } = file;
+        const type = mimetype.split('/').join('.');
+        const metadata = {
+            contentType: `${type}`,
+        };
+        const fileRef = ref(storage, `${path.path}/${originalname}`);
+        const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
+
+        const link = {
+            url: ""
+        }
+        link.url = await getDownloadURL(uploaded.ref).then((url) => { return url });
+        return link;
+    }
+
+    async uploadMp3(path: any, file: Express.Multer.File) {
         const storage = getStorage();
         const { originalname } = file;
         const { mimetype } = file;
