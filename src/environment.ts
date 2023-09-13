@@ -1,0 +1,5 @@
+/* eslint-disable prettier/prettier */
+export const environment = {
+    PORT:3000,
+    DB_URL:'mongodb+srv://apistagetree:pdHIFZ1xdepZ9dDo@reaproducoes.k1mtkyn.mongodb.net/?retryWrites=true&w=majority'
+  };

@@ -18,6 +18,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailController } from './controllers/email/email.controller';
 import { InvitationModule } from './controllers/invitation/invitation.module';
 import { ImagesUserModule } from './controllers/imagesUser/imagesUser.module';
+import { environment } from './environment';
 @Module({
   imports: [
     MailerModule.forRoot({
@@ -42,7 +43,7 @@ import { ImagesUserModule } from './controllers/imagesUser/imagesUser.module';
       isGlobal: true,
       load: [config]
     }),
-    MongooseModule.forRoot(process.env.DB_URL),
+    MongooseModule.forRoot(environment.DB_URL),
     AdminModule,
     AuthModule
   ],
