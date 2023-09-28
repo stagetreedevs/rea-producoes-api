@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Request } from './request';
@@ -22,6 +22,15 @@ export class RequestService {
 
     async getById(id: string) {
         return await this.reqModel.findById(id).exec();
+    }
+
+    async verifyEmail(email: string) {
+        const found = await this.reqModel.findOne({ email: email });
+        if (found) {
+            throw new HttpException('Este email já foi utilizado', HttpStatus.BAD_REQUEST);
+        } else {
+            return 'Email está disponível';
+        }
     }
 
     async create(req: Request) {
@@ -58,7 +67,7 @@ export class RequestService {
     async uploadAll(email: any, files: Express.Multer.File[]) {
         const storage = getStorage();
         const links = [];
-    
+
         for (const file of files) {
             const { originalname } = file;
             const { mimetype } = file;
@@ -69,11 +78,11 @@ export class RequestService {
             const fileRef = ref(storage, `requests/${email.email}/${originalname}`);
             const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
             const url = await getDownloadURL(uploaded.ref);
-    
+
             links.push(url);
         }
-    
+
         return links;
     }
-    
+
 }

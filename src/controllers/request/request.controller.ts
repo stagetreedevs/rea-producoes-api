@@ -35,6 +35,12 @@ export class RequestController {
     return this.reqService.getById(id);
   }
 
+  @Get('verify/:email')
+  @ApiOperation({ summary: 'Verificar email', description: 'Verifica se o email passado na requisição já foi utilizado.' })
+  async verifyEmail(@Param('email') email: string) {
+    return this.reqService.verifyEmail(email);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Criar requisições', description: 'Cria um requisições.' })
   @ApiBody({ type: RequestDto })
