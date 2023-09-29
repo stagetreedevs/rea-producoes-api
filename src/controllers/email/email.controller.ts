@@ -46,11 +46,12 @@ export class EmailController {
         } = body;
 
         const titleContent = `Sua imagem foi enviada com sucesso!`;
-        const htmlContent = `<p>Ebaaaa!</p><br><br>
-        <p>Recebemos seu material com sucesso!</p><br><br>
-        <p>Informamos que caso ocorra algum problema com os arquivos enviados, nossa equipe entrará em contato. Portanto, fique tranquilo.</p><br><br>
-        <p>Com carinho,</p><br><br>
-        <p>Equipe R&A</p><br>
+        const htmlContent = `
+        <p>Ebaaaa!</p><br>
+        <p>Recebemos seu material com sucesso!</p>
+        <p>Informamos que caso ocorra algum problema com os arquivos enviados, nossa equipe entrará em contato. Portanto, fique tranquilo.</p><br>
+        <p>Com carinho,</p>
+        <p>Equipe R&A</p>
         <p>#VIVAESSAEXPERIENCIA</p>`;
 
         return await this.mailService.sendMail({
@@ -89,12 +90,12 @@ export class EmailController {
 
         const titleContent = `Requisição enviada!`;
         const htmlContent =
-            `<p>Ebaaaa!</p><br><br>
-        <p>Recebemos seu material com sucesso!</p><br><br>
-        <p>Informamos que caso ocorra algum problema com os arquivos enviados, nossa equipe entrará em contato. Portanto, fique tranquilo.</p><br><br>
-        <p>Com carinho,</p><br><br>
-        <p>Equipe R&A</p><br>
-        <p>#VIVAESSAEXPERIENCIA</p>`;
+            `<p>Ebaaaa!</p><br>
+            <p>Recebemos seu material com sucesso!</p>
+            <p>Informamos que caso ocorra algum problema com os arquivos enviados, nossa equipe entrará em contato. Portanto, fique tranquilo.</p><br>
+            <p>Com carinho,</p>
+            <p>Equipe R&A</p>
+            <p>#VIVAESSAEXPERIENCIA</p>`;
 
         return await this.mailService.sendMail({
             to: toEmail,
