@@ -90,4 +90,8 @@ export class KeyService {
         return await this.keyModel.deleteOne({ _id: id }).exec();
     }
 
+    async deleteByAlbum(id: string) {
+        return await this.keyModel.deleteOne({ album: id }).exec();
+    }
+
 }

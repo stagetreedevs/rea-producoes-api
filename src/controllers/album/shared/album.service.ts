@@ -1,18 +1,19 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Album } from './album';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FolderService } from 'src/controllers/folder/shared/folder.service';
+import { KeyService } from 'src/controllers/key/shared/key.service';
 import { forkJoin } from 'rxjs';
 @Injectable()
 export class AlbumService {
 
     constructor(
         @InjectModel('Album') private readonly albumModel: Model<Album>,
-        private folderService: FolderService
+        private folderService: FolderService,
+        private keyService: KeyService
     ) { }
 
     async list() {
@@ -59,8 +60,31 @@ export class AlbumService {
         return this.getId(id);
     }
 
-    async delete(id: string) {
-        return await this.albumModel.deleteOne({ _id: id }).exec();
+    async delete(id: string): Promise<void> {
+        const albumToDelete = await this.getId(id);
+
+        if (albumToDelete) {
+            await this.keyService.deleteByAlbum(id);
+
+            if (albumToDelete.galery && albumToDelete.galery.length > 0) {
+                const errors: Error[] = [];
+
+                for (const subfolderId of albumToDelete.galery) {
+                    try {
+                        await this.folderService.delete(subfolderId);
+                    } catch (error) {
+                        errors.push(error);
+                    }
+                }
+
+                if (errors.length > 0) {
+                    throw new Error(`Erro ao excluir subpastas: ${errors.map(err => err.message).join(', ')}`);
+                }
+            }
+            await this.albumModel.deleteOne({ _id: id }).exec();
+        } else {
+            console.log('Álbum não encontrado ou já foi excluído.');
+        }
     }
 
     async upload(path: any, file: Express.Multer.File) {

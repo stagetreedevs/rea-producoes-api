@@ -142,8 +142,18 @@ export class FolderService {
         return this.getById(id);
     }
 
-    async delete(id: string) {
-        return await this.folderModel.deleteOne({ _id: id }).exec();
-    }
+    async delete(id: string): Promise<void> {
+        const folderToDelete = await this.getById(id);
+    
+        if (folderToDelete.folder && folderToDelete.folder.length > 0) {
+          // Se a pasta tiver subpastas, exclua recursivamente as subpastas
+          for (const subfolderId of folderToDelete.folder) {
+            await this.delete(subfolderId);
+          }
+        }
+    
+        // Agora exclua a pasta atual
+        await this.folderModel.deleteOne({ _id: id }).exec();
+      }
 
 }

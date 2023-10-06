@@ -5,10 +5,12 @@ import { AlbumSchema } from './schema/album.schema';
 import { AlbumService } from './shared/album.service';
 import { AlbumController } from './album.controller';
 import { FolderModule } from '../folder/folder.module';
+import { KeyModule } from '../key/key.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Album', schema: AlbumSchema }]),
-    FolderModule
+    FolderModule,
+    KeyModule
   ],
   controllers: [AlbumController],
   providers: [AlbumService],

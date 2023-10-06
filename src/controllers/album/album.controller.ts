@@ -50,9 +50,9 @@ export class AlbumController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Deletar album', description: 'Passando o id como parametro ele deleta o album requisitado.' })
-  async delete(@Param('id') id: string) {
-    this.albumService.delete(id);
-  }
+  async delete(@Param('id') id: string): Promise<void> {
+      this.albumService.delete(id);
+  }  
 
   @Post('upload/')
   @ApiOperation({ summary: 'Upload firebase', description: 'Adicionará uma imagem no banco de dados, passando o file e seu caminho.' })
