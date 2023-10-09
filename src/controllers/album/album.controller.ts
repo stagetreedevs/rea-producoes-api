@@ -30,9 +30,15 @@ export class AlbumController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Listar album por ID', description: 'Passando o id como parametro, retornar o album desejado.' })
+  @ApiOperation({ summary: 'Listar album e pasta por ID', description: 'Passando o id como parametro, retornar o album desejado.' })
   async getById(@Param('id') id: string): Promise<any> {
     return this.albumService.getById(id);
+  }
+
+  @Get('simple/:id')
+  @ApiOperation({ summary: 'Listar album por ID', description: 'Passando o id como parametro, retornar o album desejado.' })
+  async getId(@Param('id') id: string): Promise<any> {
+    return this.albumService.getId(id);
   }
 
   @Post()
