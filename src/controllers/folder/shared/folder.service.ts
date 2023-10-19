@@ -142,18 +142,26 @@ export class FolderService {
         return this.getById(id);
     }
 
+    async updateImages(id: string, newImage: string) {
+        const folder = await this.folderModel.findById(id).exec();
+        if (!folder) {
+            throw new Error('Folder not found');
+        }
+        folder.images.push(newImage);
+        await this.folderModel.updateOne({ _id: id }, { images: folder.images }).exec();
+        return folder;
+    }
+
     async delete(id: string): Promise<void> {
         const folderToDelete = await this.getById(id);
-    
+
         if (folderToDelete.folder && folderToDelete.folder.length > 0) {
-          // Se a pasta tiver subpastas, exclua recursivamente as subpastas
-          for (const subfolderId of folderToDelete.folder) {
-            await this.delete(subfolderId);
-          }
+            for (const subfolderId of folderToDelete.folder) {
+                await this.delete(subfolderId);
+            }
         }
-    
-        // Agora exclua a pasta atual
+
         await this.folderModel.deleteOne({ _id: id }).exec();
-      }
+    }
 
 }

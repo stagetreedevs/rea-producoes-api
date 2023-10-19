@@ -70,6 +70,12 @@ export class FolderController {
     return this.folderService.update(id, folder);
   }
 
+  @Put(':id/update-images')
+  @ApiOperation({ summary: 'Atualizar imagens da pasta', description: 'Passando o ID da pasta e a URL da imagem no corpo da requisição para adicionar uma nova imagem à pasta.' })
+  async updateImages(@Param('id') id: string, @Body('imageUrl') imageUrl: string): Promise<Folder> {
+    return this.folderService.updateImages(id, imageUrl);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Deletar pasta', description: 'Passando o id como parametro ele deleta a pasta requisitado.' })
   async delete(@Param('id') id: string) {
