@@ -39,6 +39,11 @@ export class FolderController {
     return this.folderService.getById(id);
   }
 
+  @Get(':id/tamanho')
+  async getByIdLength(@Param('id') id: string): Promise<any> {
+    return this.folderService.getByIdLength(id);
+  }
+
   @Get('name/:name')
   @ApiOperation({ summary: 'Listar pasta por nome', description: 'Passando o nome como parametro, retornar a pasta desejado.' })
   async getFolderByName(@Param('name') name: string) {

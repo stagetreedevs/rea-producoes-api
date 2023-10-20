@@ -20,6 +20,11 @@ export class FolderService {
         return await this.folderModel.findById(id).exec();
     }
 
+    async getByIdLength(id: string): Promise<any> {
+        const pasta = await this.folderModel.findById(id).exec();
+        return pasta.images.length;
+    }
+
     async getFolders(id: string) {
         const pasta = await this.folderModel.findById(id);
         const len: number = pasta.folder.length;
@@ -143,14 +148,19 @@ export class FolderService {
     }
 
     async updateImages(id: string, newImage: string) {
-        const folder = await this.folderModel.findById(id).exec();
-        if (!folder) {
+        const updatedFolder = await this.folderModel.findByIdAndUpdate(
+            id,
+            { $push: { images: newImage } },
+            { new: true }
+        );
+
+        if (!updatedFolder) {
             throw new Error('Folder not found');
         }
-        folder.images.push(newImage);
-        await this.folderModel.updateOne({ _id: id }, { images: folder.images }).exec();
-        return folder;
+
+        return updatedFolder;
     }
+
 
     async delete(id: string): Promise<void> {
         const folderToDelete = await this.getById(id);
