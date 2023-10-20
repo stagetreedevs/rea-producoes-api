@@ -30,9 +30,40 @@ export class FolderService {
         const len: number = pasta.folder.length;
 
         if (len === 0) {
-            return await this.folderModel.findById(id);
-        }
-        else {
+            pasta.images.sort((a, b) => {
+                const matchA = a.match(/\((\d+)\)/);
+                const matchB = b.match(/\((\d+)\)/);
+
+                if (matchA && matchB) {
+                    const numA = parseInt(matchA[1]);
+                    const numB = parseInt(matchB[1]);
+                    return numA - numB;
+                } else if (matchA) {
+                    return -1;
+                } else if (matchB) {
+                    return 1;
+                }
+                return 0;
+            });
+
+            return await pasta;
+        } else {
+            pasta.images.sort((a, b) => {
+                const matchA = a.match(/\((\d+)\)/);
+                const matchB = b.match(/\((\d+)\)/);
+
+                if (matchA && matchB) {
+                    const numA = parseInt(matchA[1]);
+                    const numB = parseInt(matchB[1]);
+                    return numA - numB;
+                } else if (matchA) {
+                    return -1;
+                } else if (matchB) {
+                    return 1;
+                }
+                return 0;
+            });
+
             const observables = pasta.folder.map(id => this.getById(id));
             const folders = await forkJoin(observables).toPromise();
             const result = {
@@ -63,6 +94,23 @@ export class FolderService {
             const videos: string[] = pasta.images.filter(item => this.isVideo(item));
             const imagens: string[] = pasta.images.filter(item => !this.isVideo(item));
 
+            // Ordenar imagens com base nos números dentro dos parênteses
+            imagens.sort((a, b) => {
+                const matchA = a.match(/\((\d+)\)/);
+                const matchB = b.match(/\((\d+)\)/);
+
+                if (matchA && matchB) {
+                    const numA = parseInt(matchA[1]);
+                    const numB = parseInt(matchB[1]);
+                    return numA - numB;
+                } else if (matchA) {
+                    return -1;
+                } else if (matchB) {
+                    return 1;
+                }
+                return 0;
+            });
+
             const result = {
                 _id: pasta._id,
                 name: pasta.name,
@@ -79,15 +127,31 @@ export class FolderService {
                 created_at: pasta.created_at
             };
             return result;
-
         } else {
-            //Pegas as pastas
+            //Pega as pastas
             const observables = pasta.folder.map(id => this.getById(id));
             const folders = await forkJoin(observables).toPromise();
 
             // Separar vídeos de imagens usando a função isVideo
             const videos: string[] = pasta.images.filter(item => this.isVideo(item));
             const imagens: string[] = pasta.images.filter(item => !this.isVideo(item));
+
+            // Ordenar imagens com base nos números dentro dos parênteses
+            imagens.sort((a, b) => {
+                const matchA = a.match(/\((\d+)\)/);
+                const matchB = b.match(/\((\d+)\)/);
+
+                if (matchA && matchB) {
+                    const numA = parseInt(matchA[1]);
+                    const numB = parseInt(matchB[1]);
+                    return numA - numB;
+                } else if (matchA) {
+                    return -1;
+                } else if (matchB) {
+                    return 1;
+                }
+                return 0;
+            });
 
             const result = {
                 _id: pasta._id,
