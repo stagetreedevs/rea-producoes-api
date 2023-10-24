@@ -36,7 +36,7 @@ import { environment } from './environment';
     RequestModule,
     AlbumModule,
     UserModule,
-    SwaggerModule, 
+    SwaggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config]
