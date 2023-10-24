@@ -44,6 +44,7 @@ export class KeyService {
             const observables = album.galery.map((id) => this.folderService.getById(id));
             const galery = await forkJoin(observables).toPromise();
             const filteredFolders = (await galery).filter((folder) => folder.child === false);
+            filteredFolders.sort((a, b) => a.name.localeCompare(b.name));
             const result = {
                 _id: album._id,
                 name: album.name,
