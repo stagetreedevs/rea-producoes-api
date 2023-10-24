@@ -13,7 +13,6 @@ import { RequestModule } from './controllers/request/request.module';
 import { FolderModule } from './controllers/folder/folder.module';
 import { KeyModule } from './controllers/key/key.module';
 import { SwaggerModule } from '@nestjs/swagger';
-import { ImageModule } from './controllers/image/image.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailController } from './controllers/email/email.controller';
 import { InvitationModule } from './controllers/invitation/invitation.module';
@@ -31,7 +30,6 @@ import { environment } from './environment';
       }
     }),
     ImagesUserModule,
-    ImageModule,
     InvitationModule,
     KeyModule,
     FolderModule,

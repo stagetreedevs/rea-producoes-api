@@ -17,7 +17,7 @@ export class AlbumService {
     ) { }
 
     async list() {
-        return await this.albumModel.find().exec();
+        return await this.albumModel.find().sort({ name: 1 }).exec();
     }
 
     async findOne(email: string): Promise<Album | undefined> {
@@ -39,6 +39,9 @@ export class AlbumService {
             const observables = album.galery.map(id => this.folderService.getById(id));
             const galery = await forkJoin(observables).toPromise();
             const filteredFolders = (await galery).filter(folder => folder.child === false);
+
+            filteredFolders.sort((a, b) => a.name.localeCompare(b.name));
+
             const result = {
                 album_id: album._id,
                 album_name: album.name,
