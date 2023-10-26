@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -22,6 +21,12 @@ export class InvitationController {
   @ApiOperation({ summary: 'Listar convite', description: 'Lista todos os convites do banco de dados.' })
   async list(): Promise<Invitation[]> {
     return this.invitService.list();
+  }
+
+  @Get('keys')
+  @ApiOperation({ summary: 'Listar turmas que possuem convite' })
+  async getClassKey(): Promise<any[]>{
+    return this.invitService.getClassKey();
   }
 
   @Get(':id')
@@ -53,6 +58,18 @@ export class InvitationController {
   @ApiOperation({ summary: 'Verificar albumID', description: 'Verifica se o album já possui um convite gerado, se tiver retorna verdadeiro, caso contrário retorna falso' })
   async getByAlbumId(@Param('id') id: string): Promise<boolean> {
     return this.invitService.findByAlbumId(id);
+  }
+
+  @Get('class/:key')
+  @ApiOperation({ summary: 'Listar convites por Chave da Turma' })
+  async findByClassKey(@Param('key') key: string) {
+    return this.invitService.findByClassKey(key);
+  }
+
+  @Get('class/:key/download')
+  @ApiOperation({ summary: 'Retorna apenas os campos name e image dos convites por Chave da Turma' })
+  async findByClassKeyWithName(@Param('key') key: string) {
+    return this.invitService.findByClassKeyWithName(key);
   }
 
 }

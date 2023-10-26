@@ -4,6 +4,7 @@ import { Document } from "mongoose";
 export class ImagesUser extends Document {
     name: string;
     email: string;
+    class_key: string;
 	course: string;
 	class: string;
 	album: string;

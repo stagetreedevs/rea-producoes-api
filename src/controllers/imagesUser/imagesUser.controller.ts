@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -24,10 +23,28 @@ export class ImagesUserController {
     return this.imgService.list();
   }
 
+  @Get('keys')
+  @ApiOperation({ summary: 'Listar turmas que possuem imagens' })
+  async getClassKey(): Promise<any[]> {
+    return this.imgService.getClassKey();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Listar imagens por ID', description: 'Passando o id como parametro, retornar a imagens desejado.' })
   async getById(@Param('id') id: string): Promise<ImagesUser> {
     return this.imgService.getById(id);
+  }
+
+  @Get('class/:key')
+  @ApiOperation({ summary: 'Listar imagens por Chave da Turma' })
+  async findByClassKey(@Param('key') key: string) {
+    return this.imgService.findByClassKey(key);
+  }
+
+  @Get('class/:key/download')
+  @ApiOperation({ summary: 'Retorna apenas campos específicos das imagens por Chave da Turma' })
+  async findByClassKeyWithName(@Param('key') key: string) {
+    return this.imgService.findByClassKeyWithName(key);
   }
 
   @Post()

@@ -6,7 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './controllers/admin/admin.module';
-import { UserModule } from './controllers/user/user.module';
 import { config } from './config';
 import { AlbumModule } from './controllers/album/album.module';
 import { RequestModule } from './controllers/request/request.module';
@@ -25,7 +24,7 @@ import { environment } from './environment';
         host: 'smtp.sendgrid.net',
         auth: {
           user: 'apikey',
-          pass: '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'
+          pass: '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'
         }
       }
     }),
@@ -35,7 +34,6 @@ import { environment } from './environment';
     FolderModule,
     RequestModule,
     AlbumModule,
-    UserModule,
     SwaggerModule,
     ConfigModule.forRoot({
       isGlobal: true,

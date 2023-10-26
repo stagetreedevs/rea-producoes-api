@@ -1,19 +1,24 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Key } from './key';
 import { Album } from 'src/controllers/album/shared/album';
 import { FolderService } from 'src/controllers/folder/shared/folder.service';
 import { forkJoin } from 'rxjs';
+import { Request } from 'src/controllers/request/shared/request';
+import { Invitation } from 'src/controllers/invitation/shared/invitation';
+import { ImagesUser } from 'src/controllers/imagesUser/shared/imagesUser';
 @Injectable()
 export class KeyService {
 
     constructor(
         @InjectModel('Key') private readonly keyModel: Model<Key>,
         @InjectModel('Album') private readonly albumModel: Model<Album>,
-        private folderService: FolderService
+        @InjectModel('Request') private readonly reqModel: Model<Request>,
+        @InjectModel('Invitation') private readonly invModel: Model<Invitation>,
+        @InjectModel('ImagesUser') private readonly imgModel: Model<ImagesUser>,
+        private folderService: FolderService,
     ) { }
 
     async list() {
@@ -30,6 +35,20 @@ export class KeyService {
 
     async getByValue(value: string) {
         return await this.keyModel.findOne({ value: value }).exec();
+    }
+
+    async getByCodeClass(key: string) {
+        const chave = await this.keyModel.findOne({ value: key }).exec();
+        if (!chave) {
+            throw new NotFoundException('Chave não encontrada');
+        }
+
+        const album = await this.albumModel.findById(chave.album).exec();
+        if (!album) {
+            throw new NotFoundException('Álbum não encontrado');
+        }
+
+        return album.name;
     }
 
     async getAlbumValue(value: string) {
@@ -74,7 +93,6 @@ export class KeyService {
             }
             return result;
         }
-
     }
 
     async create(key: Key) {
@@ -83,8 +101,29 @@ export class KeyService {
     }
 
     async update(id: string, key: Key) {
+        const originKey: any = await this.getById(id);
+
+        if (originKey.value !== key.value) {
+            await this.updateAllImages(originKey.value, key.value);
+            await this.updateAllRequests(originKey.value, key.value);
+            await this.updateAllInvitation(originKey.value, key.value);
+        }
+
+        // ATUALIZA DE FATO
         await this.keyModel.updateOne({ _id: id }, key).exec()
         return this.getById(id);
+    }
+
+    async updateAllInvitation(old_key: string, new_key: string): Promise<void> {
+        await this.invModel.updateMany({ class_key: old_key }, { $set: { class_key: new_key } }).exec();
+    }
+
+    async updateAllRequests(old_key: string, new_key: string): Promise<void> {
+        await this.reqModel.updateMany({ class_key: old_key }, { $set: { class_key: new_key } }).exec();
+    }
+
+    async updateAllImages(old_key: string, new_key: string): Promise<void> {
+        await this.imgModel.updateMany({ class_key: old_key }, { $set: { class_key: new_key } }).exec();
     }
 
     async delete(id: string) {

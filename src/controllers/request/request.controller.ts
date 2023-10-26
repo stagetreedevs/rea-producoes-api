@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -29,6 +28,12 @@ export class RequestController {
     return this.reqService.list();
   }
 
+  @Get('keys')
+  @ApiOperation({ summary: 'Listar turmas que possuem materiais enviados' })
+  async getClassKey(): Promise<any[]> {
+    return this.reqService.getClassKey();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Listar requisições por ID', description: 'Passando o id como parametro, retornar a requisições desejado.' })
   async getById(@Param('id') id: string): Promise<Request> {
@@ -39,6 +44,18 @@ export class RequestController {
   @ApiOperation({ summary: 'Verificar email', description: 'Verifica se o email passado na requisição já foi utilizado.' })
   async verifyEmail(@Param('email') email: string) {
     return this.reqService.verifyEmail(email);
+  }
+
+  @Get('class/:key')
+  @ApiOperation({ summary: 'Listar requisições por Chave da Turma' })
+  async findByClassKey(@Param('key') key: string) {
+    return this.reqService.findByClassKey(key);
+  }
+
+  @Get('class/:key/download')
+  @ApiOperation({ summary: 'Retorna apenas os campos name, linkMusic e images das requisições por Chave da Turma' })
+  async findByClassKeyWithName(@Param('key') key: string) {
+    return this.reqService.findByClassKeyWithName(key);
   }
 
   @Post()

@@ -6,11 +6,17 @@ import { KeySchema } from './schema/key.schema';
 import { KeyService } from './shared/key.service';
 import { KeyController } from './key.controller';
 import { FolderModule } from '../folder/folder.module';
+import { RequestSchema } from '../request/schema/request.schema';
+import { InvitationSchema } from '../invitation/schema/invitation.schema';
+import { ImageUserSchema } from '../imagesUser/schema/imagesUser.schema';
 @Module({
   imports: [MongooseModule.forFeature(
     [
       { name: 'Key', schema: KeySchema },
-      { name: 'Album', schema: AlbumSchema }
+      { name: 'Album', schema: AlbumSchema },
+      { name: 'Request', schema: RequestSchema },
+      { name: 'ImagesUser', schema: ImageUserSchema },
+      { name: 'Invitation', schema: InvitationSchema },
     ]),
     FolderModule
   ],

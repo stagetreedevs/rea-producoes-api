@@ -9,6 +9,9 @@ export class ImagesUserDto {
     email: string;
 
     @ApiProperty()
+    class_key: string;
+
+    @ApiProperty()
     course: string;
 
     @ApiProperty()

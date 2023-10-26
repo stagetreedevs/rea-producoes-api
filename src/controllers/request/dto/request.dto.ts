@@ -9,6 +9,9 @@ export class RequestDto {
     email: string;
 
     @ApiProperty()
+    class_key: string;
+
+    @ApiProperty()
     course: string;
 
     @ApiProperty()

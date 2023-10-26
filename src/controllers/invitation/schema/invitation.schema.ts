@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 export const InvitationSchema = new mongoose.Schema({
     name: String,
     email: String,
+    class_key: String,
 	course: String,
 	class: String,
 	image: String,
