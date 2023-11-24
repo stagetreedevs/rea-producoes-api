@@ -24,7 +24,7 @@ import { environment } from './environment';
         host: 'smtp.sendgrid.net',
         auth: {
           user: 'apikey',
-          pass: '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'
+          pass: ''
         }
       }
     }),
