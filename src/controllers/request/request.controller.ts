@@ -86,17 +86,16 @@ export class RequestController {
   }
 
   @Post('upload')
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FilesInterceptor('file'))
-  @ApiBody({ type: MusicDto })
   @ApiOperation({
     summary: 'Upload firebase',
     description: 'Passando email e arquivo .mp3 ele irá gerar um link firebase referente ao arquivo.'
   })
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
+  @ApiBody({ type: MusicDto })
   async upload(
-    @Query() email: any,
-    @UploadedFile() file
+    @Query('email') email: string,
+    @UploadedFile() file: Express.Multer.File
   ) {
     return this.reqService.upload(email, file);
   }

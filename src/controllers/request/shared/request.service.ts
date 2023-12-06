@@ -56,7 +56,7 @@ export class RequestService {
         const metadata = {
             contentType: `${type}`,
         };
-        const fileRef = ref(storage, `músicas/${email.email}/${originalname}`);
+        const fileRef = ref(storage, `músicas/${email}/${originalname}`);
         const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
 
         const link = {
