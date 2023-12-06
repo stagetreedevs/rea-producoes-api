@@ -15,8 +15,16 @@ import {
 import { Request } from './shared/request';
 import { RequestService } from './shared/request.service';
 import { RequestDto } from './dto/request.dto';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+class MusicDto {
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: Express.Multer.File;
+}
+class FileDto {
+  @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
+  files: Express.Multer.File[];
+}
 @ApiTags('Requisições')
 @Controller('request')
 export class RequestController {
@@ -78,17 +86,33 @@ export class RequestController {
   }
 
   @Post('upload')
-  @ApiOperation({ summary: 'Upload firebase', description: 'Passando email e arquivo .mp3 ele irá gerar um link firebase referente ao arquivo.' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('file'))
+  @ApiBody({ type: MusicDto })
+  @ApiOperation({
+    summary: 'Upload firebase',
+    description: 'Passando email e arquivo .mp3 ele irá gerar um link firebase referente ao arquivo.'
+  })
   @UseInterceptors(FileInterceptor('file'))
-  async upload(@Query() email: any, @UploadedFile() file) {
+  async upload(
+    @Query() email: any,
+    @UploadedFile() file
+  ) {
     return this.reqService.upload(email, file);
   }
 
   @Post('uploadAll')
-  @ApiOperation({ summary: 'Upload firebase', description: 'Passe o email e um array de arquivos. Ele irá retorna um array com todas as urls geradas pelo firebase.' })
+  @ApiOperation({
+    summary: 'Upload firebase',
+    description: 'Passe o email e um array de arquivos. Ele irá retornar um array com todas as URLs geradas pelo firebase.'
+  })
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(FilesInterceptor('files'))
-  async uploadAll(@UploadedFiles() files: Express.Multer.File[]) {
-    const email = {};
+  @ApiBody({ type: FileDto })
+  async uploadAll(
+    @Query('email') email: string,
+    @UploadedFiles() files: Express.Multer.File[]
+  ) {
     const links = await this.reqService.uploadAll(email, files);
     return { links };
   }

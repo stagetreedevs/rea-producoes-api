@@ -69,7 +69,7 @@ export class RequestService {
     async uploadAll(email: any, files: Express.Multer.File[]) {
         const storage = getStorage();
         const links = [];
-
+        
         for (const file of files) {
             const { originalname } = file;
             const { mimetype } = file;
@@ -77,13 +77,11 @@ export class RequestService {
             const metadata = {
                 contentType: `${type}`,
             };
-            const fileRef = ref(storage, `requests/${email.email}/${originalname}`);
+            const fileRef = ref(storage, `requests/${email}/${originalname}`);
             const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
             const url = await getDownloadURL(uploaded.ref);
-
             links.push(url);
         }
-
         return links;
     }
 
