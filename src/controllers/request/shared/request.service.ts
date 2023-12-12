@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { Request } from './request';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { KeyService } from 'src/controllers/key/shared/key.service';
+import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class RequestService {
 
@@ -12,6 +13,10 @@ export class RequestService {
         @InjectModel('Request') private readonly reqModel: Model<Request>,
         private keyService: KeyService
     ) { }
+
+    generateUUID(): string {
+        return uuidv4();
+    }
 
     async list() {
         return await this.reqModel.find().exec();
@@ -69,15 +74,15 @@ export class RequestService {
     async uploadAll(email: any, files: Express.Multer.File[]) {
         const storage = getStorage();
         const links = [];
-        
+
         for (const file of files) {
-            const { originalname } = file;
             const { mimetype } = file;
             const type = mimetype.split('/').join('.');
             const metadata = {
                 contentType: `${type}`,
             };
-            const fileRef = ref(storage, `requests/${email}/${originalname}`);
+            const name = `${this.generateUUID()}.${type}`;
+            const fileRef = ref(storage, `requests/${email}/${name}`);
             const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
             const url = await getDownloadURL(uploaded.ref);
             links.push(url);
