@@ -84,7 +84,7 @@ export class KeyService {
             return await this.albumModel.findById(chave.album).exec();
         }
         else {
-            const observables = album.galery.map(id => this.folderService.getById(id));
+            const observables = album.galery.map(id => this.folderService.getForKey(id));
             const galery = await forkJoin(observables).toPromise();
             const result = {
                 album_id: album._id,

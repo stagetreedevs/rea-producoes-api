@@ -15,13 +15,13 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Album } from './shared/album';
 import { AlbumService } from './shared/album.service';
-import { AlbumDto } from './dto/album.dto';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AlbumDto, AlbumUploadDto } from './dto/album.dto';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Album')
 @Controller('album')
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(private albumService: AlbumService) { }
 
   @Get()
   @ApiOperation({ summary: 'Listar albuns', description: 'Lista todos os albuns do banco de dados.' })
@@ -57,20 +57,22 @@ export class AlbumController {
   @Delete(':id')
   @ApiOperation({ summary: 'Deletar album', description: 'Passando o id como parametro ele deleta o album requisitado.' })
   async delete(@Param('id') id: string): Promise<void> {
-      this.albumService.delete(id);
-  }  
+    this.albumService.delete(id);
+  }
 
   @Post('upload/')
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload firebase', description: 'Adicionará uma imagem no banco de dados, passando o file e seu caminho.' })
   @UseInterceptors(FileInterceptor('file'))
-  async upload(@Query() path: any, @UploadedFile() file){
+  @ApiBody({ type: AlbumUploadDto })
+  async upload(@Query() path: any, @UploadedFile() file) {
     return this.albumService.upload(path, file);
   }
 
   @Put('upload/music')
   @ApiOperation({ summary: 'Upload mp3 firebase', description: 'Adicionará um arquivo de música no banco de dados, passando o file e seu caminho.' })
   @UseInterceptors(FileInterceptor('file'))
-  async uploadMp3(@Query() path: any, @UploadedFile() file){
+  async uploadMp3(@Query() path: any, @UploadedFile() file) {
     return this.albumService.uploadMp3(path, file);
   }
 

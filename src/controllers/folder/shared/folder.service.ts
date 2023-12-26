@@ -19,6 +19,24 @@ export class FolderService {
         return await this.folderModel.findById(id).exec();
     }
 
+    async getForKey(id: string) {
+        const folder = await this.getById(id);
+
+        if (!folder || !folder.images) {
+            return folder;
+        }
+
+        folder.images.sort((a, b) => {
+            const regex = /\((\d+)\)/;
+            const numA = a.match(regex) ? parseInt(a.match(regex)[1]) : 0;
+            const numB = b.match(regex) ? parseInt(b.match(regex)[1]) : 0;
+
+            return numA - numB;
+        });
+
+        return folder;
+    }
+
     async getByIdLength(id: string): Promise<any> {
         const pasta = await this.folderModel.findById(id).exec();
         return pasta.images.length;

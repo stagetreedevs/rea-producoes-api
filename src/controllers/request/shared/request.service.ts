@@ -91,7 +91,7 @@ export class RequestService {
 
         for (const file of files) {
             const { mimetype } = file;
-            const type = mimetype.split('/').join('.');
+            const type = mimetype.split('/')[1];
             const metadata = {
                 contentType: `${type}`,
             };

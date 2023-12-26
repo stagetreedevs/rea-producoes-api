@@ -109,16 +109,23 @@ export class AlbumService {
         return formattedDate;
     }
 
+    extrairConteudoEntreParenteses(originalname: string): string {
+        const regex = /\((\d+)\)/;
+        const match = originalname.match(regex);
+
+        return match ? match[0] : null;
+    }
+
     async upload(path: any, file: Express.Multer.File) {
         const storage = getStorage();
-        // const { originalname } = file;
+        const { originalname } = file;
+        const parentheses = this.extrairConteudoEntreParenteses(originalname);
         const { mimetype } = file;
-        const type = mimetype.split('/').join('.');
+        const type = mimetype.split('/')[1];
         const metadata = {
             contentType: `${type}`,
         };
-
-        const name = `${this.getCurrentDateWithMinutes()}_${this.generateUUID()}.${type}`
+        const name = `${this.getCurrentDateWithMinutes()}_${this.generateUUID()}${parentheses}.${type}`
         const fileRef = ref(storage, `${path.path}/${name}`);
         const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
 
