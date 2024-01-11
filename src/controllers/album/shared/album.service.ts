@@ -103,8 +103,7 @@ export class AlbumService {
         const hours = String(currentDate.getHours()).padStart(2, '0');
         const minutes = String(currentDate.getMinutes()).padStart(2, '0');
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-        const milliseconds = String(currentDate.getMilliseconds()).padStart(3, '0');
-        const formattedDate = `${year}-${month}-${day}-${hours}-${minutes}-${seconds}-${milliseconds}`;
+        const formattedDate = `${year}${month}${day}${hours}${minutes}${seconds}`;
 
         return formattedDate;
     }
@@ -123,9 +122,10 @@ export class AlbumService {
         const { mimetype } = file;
         const type = mimetype.split('/')[1];
         const metadata = {
-            contentType: `${type}`,
+            contentType: `${mimetype}`,
         };
-        const name = `${this.getCurrentDateWithMinutes()}_${this.generateUUID()}${parentheses}.${type}`
+
+        const name = `${this.getCurrentDateWithMinutes()}${this.generateUUID()}${parentheses}.${type}`
         const fileRef = ref(storage, `${path.path}/${name}`);
         const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
 
@@ -140,9 +140,8 @@ export class AlbumService {
         const storage = getStorage();
         const { originalname } = file;
         const { mimetype } = file;
-        const type = mimetype.split('/').join('.');
         const metadata = {
-            contentType: `${type}`,
+            contentType: `${mimetype}`,
         };
         const fileRef = ref(storage, `${path.path}/${originalname}`);
         const uploaded = await uploadBytes(fileRef, file.buffer, metadata);
