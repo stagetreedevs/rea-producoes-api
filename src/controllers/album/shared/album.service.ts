@@ -104,7 +104,7 @@ export class AlbumService {
         const minutes = String(currentDate.getMinutes()).padStart(2, '0');
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
         const milliseconds = String(currentDate.getMilliseconds()).padStart(3, '0');
-        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+        const formattedDate = `${year}-${month}-${day}-${hours}-${minutes}-${seconds}-${milliseconds}`;
 
         return formattedDate;
     }
