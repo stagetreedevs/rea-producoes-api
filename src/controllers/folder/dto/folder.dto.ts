@@ -34,3 +34,20 @@ export class FolderDto {
     @ApiProperty()
     LEDpanel: boolean;
 }
+
+export class RenameFolderDto {
+    @ApiProperty()
+    name: string;
+
+    @ApiProperty()
+    invitation: boolean;
+
+    @ApiProperty()
+    picture: boolean;
+
+    @ApiProperty()
+    photobook: boolean;
+
+    @ApiProperty()
+    LEDpanel: boolean;
+}

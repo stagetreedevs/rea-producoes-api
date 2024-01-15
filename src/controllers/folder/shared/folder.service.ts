@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Folder } from './folder';
 import { forkJoin } from 'rxjs';
+import { RenameFolderDto } from '../dto/folder.dto';
 @Injectable()
 export class FolderService {
 
@@ -228,6 +229,18 @@ export class FolderService {
         return this.getById(id);
     }
 
+    async rename(id: string, body: RenameFolderDto): Promise<Folder> {
+        const updatedFolder = await this.folderModel
+            .findOneAndUpdate({ _id: id }, { $set: body }, { new: true })
+            .exec();
+
+        if (!updatedFolder) {
+            throw new NotFoundException(`Folder with ID ${id} not found`);
+        }
+
+        return updatedFolder;
+    }
+
     async updateImages(id: string, newImage: string) {
         const updatedFolder = await this.folderModel.findByIdAndUpdate(
             id,
@@ -241,7 +254,6 @@ export class FolderService {
 
         return updatedFolder;
     }
-
 
     async delete(id: string): Promise<void> {
         const folderToDelete = await this.getById(id);

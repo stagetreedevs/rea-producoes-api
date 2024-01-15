@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Folder } from './shared/folder';
 import { FolderService } from './shared/folder.service';
-import { FolderDto } from './dto/folder.dto';
+import { FolderDto, RenameFolderDto } from './dto/folder.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Pastas')
@@ -73,6 +73,12 @@ export class FolderController {
   @ApiOperation({ summary: 'Editar pasta', description: 'Passando o id como parametro ele atualiza a pasta requisitado.' })
   async update(@Param('id') id: string, @Body() folder: Folder): Promise<Folder> {
     return this.folderService.update(id, folder);
+  }
+
+  @Put(':id/rename')
+  @ApiOperation({ summary: 'Renomear pasta' })
+  async rename(@Param('id') id: string, @Body() body: RenameFolderDto): Promise<Folder> {
+    return this.folderService.rename(id, body);
   }
 
   @Put(':id/update-images')
