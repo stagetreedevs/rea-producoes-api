@@ -20,7 +20,7 @@ export class ImagesUserService {
         return await this.imageModel.findById(id).exec();
     }
 
-    async create(img: ImagesUser) {
+    async create(img: any) {
         const created = new this.imageModel(img);
         return await created.save();
     }
@@ -35,7 +35,8 @@ export class ImagesUserService {
             ledPanel: ledPanel ? [ledPanel] : [],
         };
 
-        return response;
+        const created = await this.create(response);
+        return created;
     }
 
     async update(id: string, img: ImagesUser) {
