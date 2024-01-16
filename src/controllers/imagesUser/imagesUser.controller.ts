@@ -9,7 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ImagesUser } from './shared/imagesUser';
-import { ImagesUserDto } from './dto/imagesUser.dto';
+import { AppImagesDto, ImagesUserDto } from './dto/imagesUser.dto';
 import { ImagesUserService } from './shared/imagesUser.service';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('Imagens dos usuários')
@@ -52,6 +52,15 @@ export class ImagesUserController {
   @ApiBody({ type: ImagesUserDto })
   async create(@Body() img: ImagesUser): Promise<ImagesUser> {
     return this.imgService.create(img);
+  }
+
+  @Post('app')
+  @ApiOperation({ summary: 'Cria um pedido pelo APP' })
+  @ApiBody({ type: AppImagesDto })
+  async appCreate(
+    @Body() body: AppImagesDto
+  ): Promise<any> {
+    return this.imgService.appCreate(body);
   }
 
   @Put(':id/')

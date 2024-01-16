@@ -25,6 +25,19 @@ export class ImagesUserService {
         return await created.save();
     }
 
+    async appCreate(body: any): Promise<any> {
+        const { album, picture, ledPanel, ...resto } = body;
+
+        const response = {
+            ...resto,
+            album: album ? [album] : [],
+            picture: picture ? [picture] : [],
+            ledPanel: ledPanel ? [ledPanel] : [],
+        };
+
+        return response;
+    }
+
     async update(id: string, img: ImagesUser) {
         await this.imageModel.updateOne({ _id: id }, img).exec()
         return this.getById(id);
