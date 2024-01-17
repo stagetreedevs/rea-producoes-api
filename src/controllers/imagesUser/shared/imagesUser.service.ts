@@ -26,11 +26,11 @@ export class ImagesUserService {
     }
 
     async appCreate(body: any): Promise<any> {
-        const { album, picture, ledPanel, ...resto } = body;
+        const { albuns, picture, ledPanel, ...resto } = body;
 
         const response = {
             ...resto,
-            album: album ? [album] : [],
+            albuns: albuns ? [albuns] : [],
             picture: picture ? [picture] : [],
             ledPanel: ledPanel ? [ledPanel] : [],
         };
