@@ -62,14 +62,35 @@ export class ImagesUserService {
     }
 
     async findByClassKey(key: string) {
-        return await this.imageModel.find({ class_key: key }).sort({ name: 1 }).exec();
+        const result = await this.imageModel.find({ class_key: key }).sort({ name: 1 }).exec();
+
+        const groupedByEmail = new Map();
+
+        result.forEach(obj => {
+            const objJSON = obj.toJSON();  // Convertendo para JSON
+            if (groupedByEmail.has(objJSON.email)) {
+                const existingObj = groupedByEmail.get(objJSON.email);
+                existingObj.albuns = (existingObj.albuns || []).concat(objJSON.albuns || []);
+            } else {
+                groupedByEmail.set(objJSON.email, { ...objJSON });
+            }
+        });
+
+        return Array.from(groupedByEmail.values());
     }
 
     async findByClassKeyWithName(key: string) {
-        return await this.imageModel.find({ class_key: key })
-            .select('name ledPanel picture albuns')
-            .sort({ name: 1 })
-            .exec();
+        const results = await this.findByClassKey(key);
+
+        // Mapear os resultados para incluir apenas os campos desejados
+        const mappedResults = results.map(obj => ({
+            name: obj.name,
+            ledPanel: obj.ledPanel,
+            picture: obj.picture,
+            albuns: obj.albuns
+        }));
+
+        return mappedResults;
     }
 
 }
