@@ -255,6 +255,21 @@ export class FolderService {
         return updatedFolder;
     }
 
+    async removeImages(id: string, imageToRemove: string) {
+        const updatedFolder = await this.folderModel.findByIdAndUpdate(
+            id,
+            { $pull: { images: imageToRemove } },
+            { new: true }
+        );
+
+        if (!updatedFolder) {
+            throw new Error('Folder not found');
+        }
+
+        return updatedFolder;
+    }
+
+
     async delete(id: string): Promise<void> {
         const folderToDelete = await this.getById(id);
 
