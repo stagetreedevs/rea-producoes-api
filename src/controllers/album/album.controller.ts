@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -52,6 +51,15 @@ export class AlbumController {
   @ApiOperation({ summary: 'Editar album', description: 'Passando o id como parametro ele atualiza o album requisitado.' })
   async update(@Param('id') id: string, @Body() album: Album): Promise<Album> {
     return this.albumService.update(id, album);
+  }
+
+  @Put(':id/:limit')
+  @ApiOperation({ summary: 'Altera limite do album' })
+  async updateLimit(
+    @Param('id') id: string,
+    @Param('limit') limit: number,
+  ): Promise<any> {
+    return this.albumService.updateLimit(id, limit);
   }
 
   @Delete(':id')

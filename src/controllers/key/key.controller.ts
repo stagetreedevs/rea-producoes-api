@@ -53,6 +53,12 @@ export class KeyController {
     return this.keyService.getAlbumValue(id);
   }
 
+  @Get('album/:chave/resume')
+  @ApiOperation({ summary: 'Listar album através da chave' })
+  async getAlbumByKey(@Param('chave') chave: string): Promise<any> {
+    return this.keyService.getAlbumByKey(chave);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Criar chave', description: 'Cria um chave.' })
   @ApiBody({ type: KeyDto })

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Album } from './album';
@@ -62,6 +62,20 @@ export class AlbumService {
     async update(id: string, album: Album) {
         await this.albumModel.updateOne({ _id: id }, album).exec()
         return this.getId(id);
+    }
+
+    async updateLimit(id: string, newLimit: number): Promise<any> {
+        const updatedAlbum = await this.albumModel.findByIdAndUpdate(
+            id,
+            { $set: { limit: newLimit } },
+            { new: true }
+        ).exec();
+
+        if (!updatedAlbum) {
+            throw new NotFoundException(`Album ${id} nao encontrado`);
+        }
+
+        return await this.getById(id);
     }
 
     async delete(id: string): Promise<void> {

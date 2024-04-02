@@ -95,6 +95,12 @@ export class KeyService {
         }
     }
 
+    async getAlbumByKey(value: string) {
+        const chave = await this.keyModel.findOne({ value: value }).exec();
+        const album = await this.albumModel.findById(chave.album, 'name cover limit created_at').exec();
+        return album;
+    }
+
     async create(key: Key) {
         const created = new this.keyModel(key);
         return await created.save();
