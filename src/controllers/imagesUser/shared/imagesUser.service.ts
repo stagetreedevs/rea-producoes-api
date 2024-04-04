@@ -52,7 +52,9 @@ export class ImagesUserService {
     async getClassKey() {
         const keys = await this.imageModel.distinct('class_key').exec();
 
-        const result = await Promise.all(keys.map(async (key) => {
+        const filteredKeys = keys.filter(str => str.trim() !== '');
+
+        const result = await Promise.all(filteredKeys.map(async (key) => {
             const className = await this.keyService.getByCodeClass(key);
             return { key, class: className };
         }));
