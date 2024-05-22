@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Key } from './key';
@@ -40,12 +40,12 @@ export class KeyService {
     async getByCodeClass(key: string) {
         const chave = await this.keyModel.findOne({ value: key }).exec();
         if (!chave) {
-            throw new NotFoundException('Chave não encontrada');
+            return;
         }
 
         const album = await this.albumModel.findById(chave.album).exec();
         if (!album) {
-            throw new NotFoundException('Álbum não encontrado');
+            return;
         }
 
         return album.name;

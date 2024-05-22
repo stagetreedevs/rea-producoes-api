@@ -113,8 +113,11 @@ export class RequestService {
             return { key, class: className };
         }));
 
-        result.sort((a, b) => a.class.localeCompare(b.class));
-        return result;
+        const removeEmpty = result.filter(obj => obj.key && obj.class);
+
+        const filtered = removeEmpty.sort((a, b) => a.class.localeCompare(b.class));
+
+        return filtered;
     }
 
     async findByClassKey(key: string) {
