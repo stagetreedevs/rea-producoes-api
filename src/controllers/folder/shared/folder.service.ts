@@ -5,6 +5,10 @@ import { Model } from 'mongoose';
 import { Folder } from './folder';
 import { forkJoin } from 'rxjs';
 import { RenameFolderDto } from '../dto/folder.dto';
+import { Response } from 'express';
+import * as archiver from 'archiver';
+import axios from 'axios';
+
 @Injectable()
 export class FolderService {
 
@@ -280,6 +284,64 @@ export class FolderService {
         }
 
         await this.folderModel.deleteOne({ _id: id }).exec();
+    }
+
+    async downloadFolderAsZip(folderId: string, res: Response): Promise<void> {
+        const folder = await this.getById(folderId);
+
+        if (!folder) {
+            throw new NotFoundException('Pasta não encontrada');
+        }
+
+        const zipFilename = `${folder.name}.zip`;
+        res.setHeader('Content-Disposition', `attachment; filename=${zipFilename}`);
+        res.setHeader('Content-Type', 'application/zip');
+
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        archive.pipe(res);
+
+        try {
+            // FUNCAO LIMITE PARA REQUISICOES
+            const limitConcurrentRequests = async (tasks: (() => Promise<void>)[], limit: number) => {
+                const results = [];
+                const executing = [];
+
+                for (const task of tasks) {
+                    const p = task().then(() => executing.splice(executing.indexOf(p), 1));
+                    results.push(p);
+                    executing.push(p);
+
+                    if (executing.length >= limit) {
+                        await Promise.race(executing);
+                    }
+                }
+                return Promise.all(results);
+            };
+
+            // REALIZANDO O GET DAS IMAGENS 
+            const imageTasks = folder.images.map((url, index) => {
+                return async () => {
+                    try {
+                        const response = await axios.get(url, { responseType: 'arraybuffer' });
+                        const imageBuffer = Buffer.from(response.data, 'binary');
+                        const imageName = `${folder.name}${index + 1}.jpg`; // NOME DOS ARQUIVOS
+                        archive.append(imageBuffer, { name: imageName });
+                    } catch (error) {
+                        console.error(`Erro ao baixar a imagem ${url}:`, error);
+                    }
+                };
+            });
+
+            // NUMERO DE REQUISICOES ASSINCRONAS
+            const maxConcurrentRequests = 10;
+            await limitConcurrentRequests(imageTasks, maxConcurrentRequests);
+
+            // FINALIZA O ARQUIVO ZIP
+            await archive.finalize();
+        } catch (error) {
+            console.error('Erro ao gerar o ZIP:', error);
+            res.status(500).send('Erro ao gerar o arquivo ZIP');
+        }
     }
 
 }

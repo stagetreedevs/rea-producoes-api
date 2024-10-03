@@ -8,12 +8,13 @@ import {
   Param,
   Post,
   Put,
+  Res,
 } from '@nestjs/common';
 import { Folder } from './shared/folder';
 import { FolderService } from './shared/folder.service';
 import { FolderDto, RenameFolderDto } from './dto/folder.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-
+import { Response } from 'express';
 @ApiTags('Pastas')
 @Controller('folder')
 export class FolderController {
@@ -60,6 +61,15 @@ export class FolderController {
   @ApiOperation({ summary: 'Videos e Imagens', description: 'Passando o id como parametro, retornar as pastas que estão contidas na pasta passada.' })
   async getVideos(@Param('id') id: string): Promise<any> {
     return this.folderService.getVideos(id);
+  }
+
+  @Get('download/:folderId')
+  @ApiOperation({ summary: 'Download pasta', description: 'Gera o download de uma pasta.' })
+  async downloadFolder(
+    @Param('folderId') folderId: string,
+    @Res() res: Response
+  ) {
+    return this.folderService.downloadFolderAsZip(folderId, res);
   }
 
   @Post()
