@@ -16,7 +16,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailController } from './controllers/email/email.controller';
 import { InvitationModule } from './controllers/invitation/invitation.module';
 import { ImagesUserModule } from './controllers/imagesUser/imagesUser.module';
-import { environment } from './environment';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 @Module({
   imports: [
     MailerModule.forRoot({
@@ -24,7 +27,7 @@ import { environment } from './environment';
         host: 'smtp.sendgrid.net',
         auth: {
           user: 'apikey',
-          pass: ''
+          pass: process.env.PASS
         }
       }
     }),
@@ -37,9 +40,10 @@ import { environment } from './environment';
     SwaggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [config]
+      load: [config],
+      envFilePath: '.env'
     }),
-    MongooseModule.forRoot(environment.DB_URL),
+    MongooseModule.forRoot(process.env.DB_URL),
     AdminModule,
     AuthModule
   ],

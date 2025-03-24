@@ -101,7 +101,7 @@ export class AlbumService {
             }
             await this.albumModel.deleteOne({ _id: id }).exec();
         } else {
-            console.log('Álbum não encontrado ou já foi excluído.');
+            console.warn('Álbum não encontrado ou já foi excluído.');
         }
     }
 

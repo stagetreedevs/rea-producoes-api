@@ -1,13 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { MailerService } from '@nestjs-modules/mailer'
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { EmailDto } from './dto/email.dto'; // Import the new DTO
+
 @ApiTags('Email')
 @Controller('email')
 export class EmailController {
     constructor(private mailService: MailerService) { }
     @Post('app/user')
-    async sendUserEmail(@Body() body: any) {
+    @ApiBody({ type: EmailDto })
+    async sendUserEmail(@Body() body: EmailDto) {
         const { toEmail } = body;
         const titleContent = `Suas imagens foram enviadas com sucesso!`;
         const htmlContent = `
@@ -27,7 +30,8 @@ export class EmailController {
     }
 
     @Post('request/user')
-    async reqToUser(@Body() body: any) {
+    @ApiBody({ type: EmailDto })
+    async reqToUser(@Body() body: EmailDto) {
         const { toEmail } = body;
         const titleContent = `Requisição enviada!`;
         const htmlContent =
