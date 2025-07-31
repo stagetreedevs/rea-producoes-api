@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Request } from './request';
@@ -53,9 +53,14 @@ export class RequestService {
         }
     }
 
-    async create(req: Request) {
-        const created = new this.reqModel(req);
-        return await created.save();
+    async create(req: any): Promise<Request> {
+        try {
+            const created = new this.reqModel(req);
+            return await created.save();
+        } catch (error) {
+            console.error('Erro ao criar requisição:', error);
+            throw new InternalServerErrorException('Não foi possível criar a requisição');
+        }
     }
 
     async update(id: string, req: Request) {
@@ -88,7 +93,6 @@ export class RequestService {
     async uploadAll(email: any, files: Express.Multer.File[]) {
         const storage = getStorage();
         const links = [];
-
         for (const file of files) {
             const { mimetype } = file;
             const type = mimetype.split('/')[1];

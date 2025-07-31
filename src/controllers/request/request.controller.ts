@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -14,9 +15,9 @@ import {
 } from '@nestjs/common';
 import { Request } from './shared/request';
 import { RequestService } from './shared/request.service';
-import { RequestDto } from './dto/request.dto';
+import { CombinedRequestDto, RequestDto } from './dto/request.dto';
 import { ApiBody, ApiConsumes, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 class MusicDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   file: Express.Multer.File;
@@ -66,13 +67,6 @@ export class RequestController {
     return this.reqService.findByClassKeyWithName(key);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Criar requisições', description: 'Cria um requisições.' })
-  @ApiBody({ type: RequestDto })
-  async create(@Body() req: Request): Promise<Request> {
-    return this.reqService.create(req);
-  }
-
   @Put(':id/')
   @ApiOperation({ summary: 'Editar requisições', description: 'Passando o id como parametro ele atualiza a requisições requisitado.' })
   async update(@Param('id') id: string, @Body() req: Request): Promise<Request> {
@@ -83,6 +77,52 @@ export class RequestController {
   @ApiOperation({ summary: 'Deletar requisições', description: 'Passando o id como parametro ele deleta a requisições requisitado.' })
   async delete(@Param('id') id: string) {
     this.reqService.delete(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Criar requisições', description: 'Cria um requisições.' })
+  @ApiBody({ type: RequestDto })
+  async create(@Body() req: Request): Promise<Request> {
+    return this.reqService.create(req);
+  }
+
+  @Post('combined')
+  @ApiOperation({
+    summary: 'Criar requisição com uploads',
+    description: 'Combina upload de imagens, música e criação de requisição em uma única chamada.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'linkMusic', maxCount: 1 },
+    { name: 'images', maxCount: 5 },
+  ]))
+  @ApiBody({ type: CombinedRequestDto })
+  async createWithUploads(
+    @UploadedFiles() files: {
+      linkMusic?: Express.Multer.File[],
+      images?: Express.Multer.File[]
+    },
+    @Body() body: Omit<CombinedRequestDto, 'images' | 'linkMusic'>,
+  ) {
+    const linkMusic = files.linkMusic?.[0];
+    const images = files.images || [];
+    if (!linkMusic) {
+      throw new BadRequestException('Arquivo de música é obrigatório');
+    }
+    // 1. Upload das imagens
+    const imageLinks = await this.reqService.uploadAll(body.email, images);
+    // 2. Upload da música
+    const musicLink = await this.reqService.upload(body.email, linkMusic);
+    // 3. Criar a requisição com os links gerados
+
+    const requestData: any = {
+      ...body,
+      images: imageLinks as [string],
+      linkMusic: musicLink.url,
+      created_at: new Date(),
+    };
+
+    return this.reqService.create(requestData);
   }
 
   @Post('upload')

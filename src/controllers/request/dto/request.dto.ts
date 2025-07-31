@@ -22,7 +22,25 @@ export class RequestDto {
 
     @ApiProperty()
     images: [string];
-    
+
     @ApiProperty()
     created_at: Date;
+}
+
+export class CombinedRequestDto {
+    @ApiProperty()
+    name: string;
+
+    @ApiProperty()
+    email: string;
+
+    @ApiProperty()
+    class_key: string;
+
+    @ApiProperty()
+    course: string;
+
+    @ApiProperty()
+    class: string;
+
 }
