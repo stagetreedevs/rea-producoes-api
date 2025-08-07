@@ -31,9 +31,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('R&A Producoes')
-    .setDescription('R&A Producoes API - Todos os endpoints da aplicação')
-    .setVersion('1.0')
-    .addTag('app')
+    .setDescription('R&A Producoes API')
     .build();
   const document = SwaggerModule.createDocument(app, config);
 

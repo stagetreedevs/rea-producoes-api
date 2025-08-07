@@ -17,6 +17,7 @@ import { EmailController } from './controllers/email/email.controller';
 import { InvitationModule } from './controllers/invitation/invitation.module';
 import { ImagesUserModule } from './controllers/imagesUser/imagesUser.module';
 import * as dotenv from 'dotenv';
+import { EmailModule } from './controllers/email/email.module';
 
 dotenv.config();
 
@@ -24,10 +25,15 @@ dotenv.config();
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.sendgrid.net',
+        host: 'smtp-relay.brevo.com',
+        port: 587,
+        secure: false,
         auth: {
-          user: 'apikey',
-          pass: process.env.PASS
+          user: process.env.BREVO_EMAIL,
+          pass: process.env.BREVO_SMTP_KEY,
+        },
+        tls: {
+          rejectUnauthorized: false  // Ignora verificação de certificado
         }
       }
     }),
@@ -37,6 +43,7 @@ dotenv.config();
     FolderModule,
     RequestModule,
     AlbumModule,
+    EmailModule,
     SwaggerModule,
     ConfigModule.forRoot({
       isGlobal: true,

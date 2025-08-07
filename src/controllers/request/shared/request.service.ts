@@ -6,12 +6,14 @@ import { Request } from './request';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { KeyService } from 'src/controllers/key/shared/key.service';
 import { v4 as uuidv4 } from 'uuid';
+import { EmailService } from 'src/controllers/email/email.service';
 @Injectable()
 export class RequestService {
 
     constructor(
         @InjectModel('Request') private readonly reqModel: Model<Request>,
-        private keyService: KeyService
+        private readonly keyService: KeyService,
+        private readonly emailService: EmailService
     ) { }
 
     generateUUID(): string {
@@ -56,6 +58,7 @@ export class RequestService {
     async create(req: any): Promise<Request> {
         try {
             const created = new this.reqModel(req);
+            await this.emailService.reqToUser(req.email);
             return await created.save();
         } catch (error) {
             console.error('Erro ao criar requisição:', error);
