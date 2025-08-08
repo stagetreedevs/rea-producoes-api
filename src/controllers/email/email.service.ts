@@ -17,7 +17,7 @@ export class EmailService {
 
         await this.mailerService.sendMail({
             to: toEmail,
-            from: 'noreply@reaproducoes.com',
+            from: '"Equipe R&A" <noreply@reaproducoes.com>',
             subject: titleContent,
             html: htmlContent,
         });
@@ -35,7 +35,7 @@ export class EmailService {
 
         return await this.mailerService.sendMail({
             to: toEmail,
-            from: 'noreply@reaproducoes.com',
+            from: '"Equipe R&A" <noreply@reaproducoes.com>',
             subject: titleContent,
             html: htmlContent
         });

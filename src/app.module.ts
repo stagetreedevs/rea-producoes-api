@@ -34,7 +34,10 @@ dotenv.config();
         },
         tls: {
           rejectUnauthorized: false  // Ignora verificação de certificado
-        }
+        },
+        defaults: {
+          from: '"Equipe R&A" <noreply@reaproducoes.com>', // Remetente padrão
+        },
       }
     }),
     ImagesUserModule,
