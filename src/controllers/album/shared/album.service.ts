@@ -8,6 +8,9 @@ import { FolderService } from 'src/controllers/folder/shared/folder.service';
 import { KeyService } from 'src/controllers/key/shared/key.service';
 import { forkJoin } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { Response } from 'express';
+import * as archiver from 'archiver';
+import axios from 'axios';
 @Injectable()
 export class AlbumService {
 
@@ -165,5 +168,107 @@ export class AlbumService {
         }
         link.url = await getDownloadURL(uploaded.ref).then((url) => { return url });
         return link;
+    }
+
+    async downloadAlbumAsZip(albumId: string, res: Response): Promise<void> {
+        const album = await this.getId(albumId);
+
+        if (!album) {
+            throw new NotFoundException('Álbum não encontrado');
+        }
+
+        const zipFilename = `${album.name.replace(/[^a-zA-Z0-9]/g, '_')}.zip`;
+        res.setHeader('Content-Disposition', `attachment; filename=${zipFilename}`);
+        res.setHeader('Content-Type', 'application/zip');
+
+        const archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+
+        archive.pipe(res);
+
+        try {
+            // Busca todas as pastas do álbum de uma vez
+            const folders = await Promise.all(
+                album.galery.map(folderId =>
+                    this.folderService.getById(folderId)
+                )
+            );
+
+            // Filtra pastas válidas
+            const validFolders = folders.filter(folder => folder !== null);
+
+            if (validFolders.length === 0) {
+                throw new NotFoundException('Nenhuma pasta encontrada no álbum');
+            }
+
+            // Processa todas as pastas paralelamente
+            await this.processFoldersForZip(validFolders, archive);
+
+            await archive.finalize();
+
+        } catch (error) {
+            console.error('Erro ao gerar o ZIP do álbum:', error);
+            if (!res.headersSent) {
+                res.status(500).send('Erro ao gerar o arquivo ZIP');
+            }
+        }
+    }
+
+    private async processFoldersForZip(folders: any[], archive: archiver.Archiver): Promise<void> {
+        const limitConcurrentRequests = async (tasks: (() => Promise<void>)[], limit: number) => {
+            const results = [];
+            const executing = new Set<Promise<void>>();
+
+            for (const task of tasks) {
+                const p = task().finally(() => executing.delete(p));
+                executing.add(p);
+                results.push(p);
+
+                if (executing.size >= limit) {
+                    await Promise.race(executing);
+                }
+            }
+
+            return Promise.all(results);
+        };
+
+        // Cria tarefas para todas as imagens de todas as pastas
+        const allImageTasks: (() => Promise<void>)[] = [];
+
+        folders.forEach(folder => {
+            const folderName = folder.name.replace(/[^a-zA-Z0-9\u00C0-\u00FF\s]/gi, '_');
+
+            folder.images.forEach((url: string, index: number) => {
+                const task = async () => {
+                    try {
+                        const response = await axios.get(url, {
+                            responseType: 'arraybuffer',
+                            timeout: 30000
+                        });
+
+                        const imageBuffer = Buffer.from(response.data, 'binary');
+                        const extension = this.getFileExtension(url);
+                        const imageName = `${folderName}/imagem_${index + 1}.${extension}`;
+
+                        archive.append(imageBuffer, { name: imageName });
+                    } catch (error) {
+                        console.error(`Erro ao baixar imagem ${url}:`, error.message);
+                    }
+                };
+
+                allImageTasks.push(task);
+            });
+        });
+
+        // Executa com limite de concorrência
+        const maxConcurrentRequests = 5; // Reduzido para evitar sobrecarga
+        await limitConcurrentRequests(allImageTasks, maxConcurrentRequests);
+    }
+
+    private getFileExtension(url: string): string {
+        const urlWithoutParams = url.split('?')[0];
+        const parts = urlWithoutParams.split('.');
+        return parts[parts.length - 1].toLowerCase() || 'jpg';
     }
 }

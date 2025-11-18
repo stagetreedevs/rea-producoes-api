@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { Album } from './shared/album';
 import { AlbumService } from './shared/album.service';
 import { AlbumDto, AlbumUploadDto } from './dto/album.dto';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @ApiTags('Album')
 @Controller('album')
@@ -38,6 +40,15 @@ export class AlbumController {
   @ApiOperation({ summary: 'Listar album por ID', description: 'Passando o id como parametro, retornar o album desejado.' })
   async getId(@Param('id') id: string): Promise<any> {
     return this.albumService.getId(id);
+  }
+
+  @Get('download/:id')
+  @ApiOperation({ summary: 'Download album', description: 'Gera o download de um album.' })
+  async downloadAlbum(
+    @Param('id') id: string,
+    @Res() res: Response
+  ) {
+    return this.albumService.downloadAlbumAsZip(id, res);
   }
 
   @Post()
