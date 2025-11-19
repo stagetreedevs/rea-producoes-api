@@ -171,47 +171,106 @@ export class AlbumService {
     }
 
     async downloadAlbumAsZip(albumId: string, res: Response): Promise<void> {
-        const album = await this.getId(albumId);
+        const album = await this.albumModel.findById(albumId).select('name galery').lean();
 
         if (!album) {
             throw new NotFoundException('Álbum não encontrado');
         }
 
         const zipFilename = `${album.name.replace(/[^a-zA-Z0-9]/g, '_')}.zip`;
+
+        // Configura headers
         res.setHeader('Content-Disposition', `attachment; filename=${zipFilename}`);
         res.setHeader('Content-Type', 'application/zip');
 
+        // Configuração EXTREMAMENTE otimizada para baixa memória
         const archive = archiver('zip', {
-            zlib: { level: 9 }
+            zlib: { level: 0 }, // Compressão ZERO para economizar CPU
+            highWaterMark: 64 * 1024, // Buffer de apenas 64KB
+            store: true // Apenas armazenar, sem compressão
         });
 
-        archive.pipe(res);
+        // Monitoramento rigoroso de recursos
+        const startTime = Date.now();
+        let processedFiles = 0;
+        let totalSize = 0;
+
+        const resourceMonitor = setInterval(() => {
+            const memoryUsage = process.memoryUsage();
+            const uptime = Date.now() - startTime;
+
+            // Alerta crítico de memória
+            if (memoryUsage.heapUsed > 800 * 1024 * 1024) { // 800MB
+                console.warn('ALERTA: Memória crítica, forçando GC');
+                if (global.gc) {
+                    global.gc();
+                }
+            }
+        }, 10000);
 
         try {
-            // Busca todas as pastas do álbum de uma vez
-            const folders = await Promise.all(
-                album.galery.map(folderId =>
-                    this.folderService.getById(folderId)
-                )
-            );
+            // Pipe do archive para response
+            archive.pipe(res);
 
-            // Filtra pastas válidas
-            const validFolders = folders.filter(folder => folder !== null);
+            // Event handlers para debug
+            archive.on('warning', (err) => {
+                console.warn('Archive warning:', err);
+            });
 
-            if (validFolders.length === 0) {
-                throw new NotFoundException('Nenhuma pasta encontrada no álbum');
+            archive.on('error', (err) => {
+                console.error('Archive error:', err);
+                throw err;
+            });
+
+            // Busca pastas de forma PAGINADA para evitar sobrecarga de memória
+            const folderIds = album.galery || [];
+
+            // Processa no máximo 3 pastas por vez
+            const BATCH_SIZE = 3;
+
+            for (let i = 0; i < folderIds.length; i += BATCH_SIZE) {
+                const batch = folderIds.slice(i, i + BATCH_SIZE);
+
+                await this.processFolderBatch(batch, archive, (count, size) => {
+                    processedFiles += count;
+                    totalSize += size;
+                });
+
+                // Pausa estratégica entre batches
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Força GC a cada 5 batches se disponível
+                if (global.gc && i > 0 && i % (BATCH_SIZE * 5) === 0) {
+                    global.gc();
+                }
+
+                // Verifica se o cliente ainda está conectado
+                // substitui res.closed (não existe em Express Response) por res.finished
+                // e usa res.socket?.destroyed para cobrir o caso do socket ter sido destruído
+                if (res.finished || res.socket?.destroyed) {
+                    break;
+                }
             }
-
-            // Processa todas as pastas paralelamente
-            await this.processFoldersForZip(validFolders, archive);
 
             await archive.finalize();
 
         } catch (error) {
-            console.error('Erro ao gerar o ZIP do álbum:', error);
+            console.error('Erro crítico ao gerar ZIP:', error);
+            clearInterval(resourceMonitor);
+
             if (!res.headersSent) {
-                res.status(500).send('Erro ao gerar o arquivo ZIP');
+                res.status(500).json({
+                    error: 'Falha ao gerar arquivo ZIP',
+                    message: error.message
+                });
             }
+
+            // Destrói o archive em caso de erro
+            if (archive) {
+                archive.destroy();
+            }
+        } finally {
+            clearInterval(resourceMonitor);
         }
     }
 
@@ -267,8 +326,138 @@ export class AlbumService {
     }
 
     private getFileExtension(url: string): string {
-        const urlWithoutParams = url.split('?')[0];
-        const parts = urlWithoutParams.split('.');
-        return parts[parts.length - 1].toLowerCase() || 'jpg';
+        try {
+            const urlObj = new URL(url);
+            const pathname = urlObj.pathname;
+            const parts = pathname.split('.');
+            if (parts.length > 1) {
+                return parts.pop()?.toLowerCase() || 'jpg';
+            }
+        } catch {
+            // Fallback para parsing simples
+            const urlWithoutParams = url.split('?')[0];
+            const parts = urlWithoutParams.split('.');
+            return parts.length > 1 ? parts.pop()?.toLowerCase() || 'jpg' : 'jpg';
+        }
+        return 'jpg';
     }
+
+    private async addImageToArchive(
+        url: string,
+        folderName: string,
+        index: number,
+        archive: archiver.Archiver
+    ): Promise<{ size: number }> {
+        try {
+            const response = await axios({
+                method: 'GET',
+                url: url,
+                responseType: 'stream',
+                timeout: 30000,
+                maxContentLength: 100 * 1024 * 1024, // 100MB max por arquivo
+                decompress: false // Não descomprimir automaticamente
+            });
+
+            const extension = this.getFileExtension(url);
+            const filename = `imagem_${index}.${extension}`;
+            const fullPath = `${folderName}/${filename}`;
+
+            return new Promise((resolve, reject) => {
+                let size = 0;
+
+                response.data.on('data', (chunk: Buffer) => {
+                    size += chunk.length;
+                });
+
+                response.data.on('end', () => {
+                    resolve({ size });
+                });
+
+                response.data.on('error', reject);
+
+                // Adiciona o stream diretamente ao archive
+                archive.append(response.data, { name: fullPath });
+            });
+
+        } catch (error) {
+            console.error(`Falha no download da imagem ${index} da pasta ${folderName}:`, error.message);
+            return { size: 0 };
+        }
+
+
+    }
+
+    private async processFolderBatch(folderIds: string[], archive: archiver.Archiver, progress: (count: number, size: number) => void): Promise<void> {
+        const folders = [];
+
+        // Busca informações básicas das pastas
+        for (const folderId of folderIds) {
+            try {
+                const folder = await this.folderService.getFolderForDownload(folderId);
+                if (folder && folder.images && folder.images.length > 0) {
+                    folders.push(folder);
+                }
+            } catch (error) {
+                console.error(`Erro ao buscar pasta ${folderId}:`, error.message);
+            }
+        }
+
+        if (folders.length === 0) return;
+
+        // Processa imagens com limite de concorrência BAIXO
+        const imageTasks: Array<Promise<{ count: number, size: number }>> = [];
+
+        for (const folder of folders) {
+            const task = this.processFolderImages(folder, archive);
+            imageTasks.push(task);
+        }
+
+        const results = await Promise.allSettled(imageTasks);
+
+        let totalCount = 0;
+        let totalSize = 0;
+
+        results.forEach(result => {
+            if (result.status === 'fulfilled') {
+                totalCount += result.value.count;
+                totalSize += result.value.size;
+            }
+        });
+
+        progress(totalCount, totalSize);
+    }
+
+    private async processFolderImages(folder: any, archive: archiver.Archiver): Promise<{ count: number, size: number }> {
+        const folderName = folder.name.replace(/[^a-zA-Z0-9\u00C0-\u00FF\s]/gi, '_');
+        const images = folder.images || [];
+
+        let processedCount = 0;
+        let processedSize = 0;
+
+        // Processa imagens em MICRO-BATCHES de 2 por vez
+        const IMAGE_BATCH_SIZE = 2;
+
+        for (let i = 0; i < images.length; i += IMAGE_BATCH_SIZE) {
+            const batch = images.slice(i, i + IMAGE_BATCH_SIZE);
+            const batchPromises = batch.map((url, index) =>
+                this.addImageToArchive(url, folderName, i + index + 1, archive)
+            );
+
+            const batchResults = await Promise.allSettled(batchPromises);
+
+            batchResults.forEach(result => {
+                if (result.status === 'fulfilled' && result.value) {
+                    processedCount++;
+                    processedSize += result.value.size;
+                }
+            });
+
+            // Pequena pausa entre micro-batches
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        return { count: processedCount, size: processedSize };
+    }
+
+
 }
